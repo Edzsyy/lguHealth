@@ -1,7 +1,7 @@
 <?php
-$servername = "localhost";  // Change as needed (use IP or domain name for remote server)
-$username = "root";
-$password = "";
+$servername = "localhost";
+$username = "root"; // It's best not to hardcode credentials
+$password = ""; // It's best not to hardcode credentials
 $dbname = "lgu_health";
 
 // Create connection

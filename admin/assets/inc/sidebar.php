@@ -4,7 +4,7 @@
     <ul class="side-menu">
         <li class="divider" data-text="main">Main</li>
         <li><a href="admin_dashboard.php" class="active"><i class='bx bxs-dashboard icon'></i>Dashboard</a></li>
-        <li><a href="admin_patient.php"><i class='bx bxs-user-plus icon'></i>Patients</a></li>
+        <li><a href="admin_patients.php"><i class='bx bxs-user-plus icon'></i>Patients</a></li>
         <li><a href="admin_appointment.php"><i class='bx bxs-calendar-plus icon'></i>Appointments</a></li>
         <li><a href="admin_inventory.php"><i class='bx bxs-capsule icon'></i>Inventory</a></li>
         <li><a href="admin_inventoryReport.php"><i class='bx bxs-report icon'></i>Inventory Report</a></li>
