@@ -1,49 +1,81 @@
 <?php
 session_start();
 header('Content-Type: application/json');
+
+// Include database configuration
 include('../../admin/assets/config/dbconn.php');
 
-$where_clause = "1=1";
+try {
+    $filters = [];
+    $params = [];
+    $types = "";
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['filterData'])) {
-    $filterData = json_decode($_POST['filterData'], true);
-        if(isset($filterData['filterName']) && !empty($filterData['filterName'])) {
-         $where_clause .= " AND patient_name LIKE '%" . $conn->real_escape_string($filterData['filterName']) . "%'";
-        }
-        if(isset($filterData['filterStartDate']) && !empty($filterData['filterStartDate'])) {
-            $where_clause .= " AND date_of_birth >= '" . $conn->real_escape_string($filterData['filterStartDate']) . "'";
-        }
-        if(isset($filterData['filterEndDate']) && !empty($filterData['filterEndDate'])) {
-           $where_clause .= " AND date_of_birth <= '" . $conn->real_escape_string($filterData['filterEndDate']) . "'";
-        }
-        if(isset($filterData['filterAdmissionType']) && !empty($filterData['filterAdmissionType'])) {
-              $where_clause .= " AND registration_type = '" . $conn->real_escape_string($filterData['filterAdmissionType']) . "'";
-        }
-         if(isset($filterData['filterStatus']) && !empty($filterData['filterStatus'])) {
-              $where_clause .= " AND status = '" . $conn->real_escape_string($filterData['filterStatus']) . "'";
-        }
-        if(isset($filterData['filterGender']) && !empty($filterData['filterGender'])) {
-              $where_clause .= " AND gender = '" . $conn->real_escape_string($filterData['filterGender']) . "'";
-        }
-       if(isset($filterData['filterAge']) && !empty($filterData['filterAge'])) {
-            $age = intval($filterData['filterAge']);
-             $where_clause .= " AND  TIMESTAMPDIFF(YEAR, date_of_birth, CURDATE()) = " . $age;
-        }
-     if(isset($filterData['filterDoctor']) && !empty($filterData['filterDoctor'])) {
-              $where_clause .= " AND 1 = 0";  // You will need to make a join with other tables if you need to filter for doctor's name.
-         }
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['filterData'])) {
+        $filterData = json_decode($_POST['filterData'], true);
 
-}
-// Prepare and execute the query
-    $stmt = $conn->prepare("SELECT patient_id, patient_name, date_of_birth, gender, contact_number FROM patients WHERE $where_clause ");
-     $stmt->execute();
-     $result = $stmt->get_result();
-     $patients = array();
-   while ($row = $result->fetch_assoc()) {
-         $patients[] = $row;
+        if (isset($filterData['filterName']) && !empty($filterData['filterName'])) {
+            $filters[] = "patient_name LIKE ?";
+            $params[] = "%" . $filterData['filterName'] . "%";
+            $types .= "s";
+        }
+        if (isset($filterData['filterStartDate']) && !empty($filterData['filterStartDate'])) {
+            $filters[] = "date_of_birth >= ?";
+            $params[] = $filterData['filterStartDate'];
+            $types .= "s";
+        }
+        if (isset($filterData['filterEndDate']) && !empty($filterData['filterEndDate'])) {
+            $filters[] = "date_of_birth <= ?";
+            $params[] = $filterData['filterEndDate'];
+            $types .= "s";
+        }
+        if (isset($filterData['filterAdmissionType']) && !empty($filterData['filterAdmissionType'])) {
+            $filters[] = "registration_type = ?";
+            $params[] = $filterData['filterAdmissionType'];
+            $types .= "s";
+        }
+        if (isset($filterData['filterStatus']) && !empty($filterData['filterStatus'])) {
+            $filters[] = "status = ?";
+            $params[] = $filterData['filterStatus'];
+            $types .= "s";
+        }
+        if (isset($filterData['filterGender']) && !empty($filterData['filterGender'])) {
+            $filters[] = "gender = ?";
+            $params[] = $filterData['filterGender'];
+            $types .= "s";
+        }
+        if (isset($filterData['filterAge']) && !empty($filterData['filterAge'])) {
+            $filters[] = "TIMESTAMPDIFF(YEAR, date_of_birth, CURDATE()) = ?";
+            $params[] = intval($filterData['filterAge']);
+            $types .= "i";
+        }
     }
 
-  echo json_encode($patients);
+    // Construct the WHERE clause
+    $where_clause = $filters ? implode(" AND ", $filters) : "1=1";
+    $query = "SELECT patient_id, patient_name, date_of_birth, gender, contact_number FROM patients WHERE $where_clause";
+
+    // Prepare the statement
+    $stmt = $conn->prepare($query);
+
+    if (!empty($params)) {
+        $stmt->bind_param($types, ...$params);
+    }
+
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $patients = [];
+
+    while ($row = $result->fetch_assoc()) {
+        $patients[] = $row;
+    }
+
+    echo json_encode($patients);
+
     $stmt->close();
-$conn->close();
+} catch (Exception $e) {
+    error_log("Error: " . $e->getMessage());
+    echo json_encode(['success' => false, 'message' => 'An error occurred while processing your request']);
+} finally {
+    $conn->close();
+}
 ?>

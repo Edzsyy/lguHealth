@@ -96,7 +96,7 @@ include('../admin/assets/inc/navbar.php');
         </div>
     </div>
 
-     <!-- Add Patient Modal -->
+    <!-- Add Patient Modal -->
     <div class="modal fade" id="addPatientModal" tabindex="-1" aria-labelledby="addPatientModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -104,11 +104,11 @@ include('../admin/assets/inc/navbar.php');
                     <h5 class="modal-title" id="addPatientModalLabel">Add New Patient</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
+                 <div class="modal-body">
                    <form id="addPatientForm" method="post" action="">
-                       <div class="mb-3">
+                        <div class="mb-3">
                          <label for="patientName" class="form-label">Name</label>
-                       <input type="text" class="form-control" id="patientName" name="patientName" required>
+                       <input type="text" class="form-control" id="patientName" name="patientName" required placeholder="Enter full name">
                     </div>
                      <div class="mb-3">
                        <label for="patientDob" class="form-label">Date of Birth</label>
@@ -124,12 +124,35 @@ include('../admin/assets/inc/navbar.php');
                     </div>
                      <div class="mb-3">
                         <label for="patientContact" class="form-label">Contact Number</label>
-                       <input type="text" class="form-control" id="patientContact" name="patientContact" required>
+                       <input type="text" class="form-control" id="patientContact" name="patientContact" required placeholder="Enter contact number">
                     </div>
                       <div class="mb-3">
                          <label for="patientAddress" class="form-label">Address</label>
-                         <input type="text" class="form-control" id="patientAddress" name="patientAddress" required>
+                         <input type="text" class="form-control" id="patientAddress" name="patientAddress" required placeholder="Enter full address">
                     </div>
+                     <div class="mb-3">
+                        <label for="admissionType" class="form-label">Admission Type</label>
+                        <select class="form-select" id="admissionType" name="admissionType" required>
+                            <option value="staff">Staff</option>
+                            <option value="self-registered">Self-Registered</option>
+                        </select>
+                       </div>
+                      <div class="mb-3">
+                        <label for="patientStatus" class="form-label">Patient Status</label>
+                           <select class="form-select" id="patientStatus" name="patientStatus" required>
+                             <option value="active">Active</option>
+                            <option value="discharged">Discharged</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="doctorAssigned" class="form-label">Assigned Doctor</label>
+                         <select class="form-select" id="doctorAssigned" name="doctorAssigned" required>
+                                <option value="">Select Doctor</option>
+                                <?php foreach ($doctors as $doctor): ?>
+                                    <option value="<?php echo $doctor['user_id']; ?>" ><?php echo $doctor['user_name']; ?></option>
+                                <?php endforeach; ?>
+                           </select>
+                   </div>
                     <div class="mb-3">
                         <label for="patientMedicalHistory" class="form-label">Medical History</label>
                          <textarea class="form-control" id="patientMedicalHistory" name="patientMedicalHistory"></textarea>
@@ -139,10 +162,10 @@ include('../admin/assets/inc/navbar.php');
                          <textarea class="form-control" id="patientAllergies" name="patientAllergies"></textarea>
                     </div>
                   <button type="submit" class="btn btn-primary">Add Patient</button>
-                </form>
-            </div>
-        </div>
-    </div>
+              </form>
+          </div>
+      </div>
+   </div>
 </div>
    <!-- View Patient Modal -->
     <div class="modal fade" id="viewPatientModal" tabindex="-1" aria-labelledby="viewPatientModalLabel" aria-hidden="true">
@@ -168,12 +191,12 @@ include('../admin/assets/inc/navbar.php');
         </div>
     </div>
 </main>
- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     // Function to handle filter form
     document.getElementById('patientFilterForm').addEventListener('submit', function(event) {
-        event.preventDefault(); // Prevent the form from submitting normally
-       // Get all the filter values
+         event.preventDefault(); // Prevent the form from submitting normally
+        // Get all the filter values
         const filterName = document.getElementById('filterName').value;
         const filterStartDate = document.getElementById('filterStartDate').value;
         const filterEndDate = document.getElementById('filterEndDate').value;
@@ -181,41 +204,41 @@ include('../admin/assets/inc/navbar.php');
         const filterStatus = document.getElementById('filterStatus').value;
         const filterGender = document.getElementById('filterGender').value;
         const filterAge = document.getElementById('filterAge').value;
-        const filterDoctor = document.getElementById('filterDoctor').value;
+         const filterDoctor = document.getElementById('filterDoctor').value;
            // Prepare filter data
         const filterData = {
-             filterName: filterName,
-            filterStartDate: filterStartDate,
+            filterName: filterName,
+             filterStartDate: filterStartDate,
             filterEndDate: filterEndDate,
-            filterAdmissionType: filterAdmissionType,
+             filterAdmissionType: filterAdmissionType,
              filterStatus: filterStatus,
-            filterGender: filterGender,
-              filterAge: filterAge,
-             filterDoctor: filterDoctor
-          };
-         fetch('api/patients_management/get_patients.php', {
+             filterGender: filterGender,
+             filterAge: filterAge,
+            filterDoctor: filterDoctor
+        };
+          fetch('/lguHealth/api/patients_management/get_patients.php', {
                 method: 'POST',
-               headers: {
-                 'Content-Type': 'application/json',
-                 },
+                headers: {
+                  'Content-Type': 'application/json',
+               },
                 body: JSON.stringify({filterData: filterData})
-           })
-            .then(response => {
-                 if (!response.ok) {
-                    throw new Error('Failed to fetch patients');
-                     }
-                   return response.json();
+             })
+               .then(response => {
+                  if (!response.ok) {
+                     throw new Error('Failed to fetch patients');
+                }
+                    return response.json();
                })
-             .then(patients => {
-                 displayPatients(patients);
-               })
-           .catch(error => {
-               console.error('Error fetching patients:', error);
-                 alert('Failed to fetch patients');
-           });
+               .then(patients => {
+                    displayPatients(patients);
+              })
+               .catch(error => {
+                   console.error('Error fetching patients:', error);
+                     alert('Failed to fetch patients');
+              });
     });
        // Javascript implementation, You will have to implement the save data with php
-      document.getElementById('addPatientForm').addEventListener('submit', function(event) {
+    document.getElementById('addPatientForm').addEventListener('submit', function(event) {
         event.preventDefault(); // Prevent the form from submitting normally
          // Get form values (you can add validation in here)
          const patientName = document.getElementById('patientName').value;
@@ -223,95 +246,127 @@ include('../admin/assets/inc/navbar.php');
          const patientGender = document.getElementById('patientGender').value;
          const patientContact = document.getElementById('patientContact').value;
           const patientAddress = document.getElementById('patientAddress').value;
-         const patientMedicalHistory = document.getElementById('patientMedicalHistory').value;
+        const patientMedicalHistory = document.getElementById('patientMedicalHistory').value;
          const patientAllergies = document.getElementById('patientAllergies').value;
-         // Prepare data
-          const formData = {
+        const admissionType = document.getElementById('admissionType').value;
+        const patientStatus = document.getElementById('patientStatus').value;
+        const doctorAssigned = document.getElementById('doctorAssigned').value;
+           // Prepare data
+        const formData = {
              patientName: patientName,
             patientDob: patientDob,
             patientGender: patientGender,
-            patientContact: patientContact,
+             patientContact: patientContact,
             patientAddress: patientAddress,
-            patientMedicalHistory: patientMedicalHistory,
-             patientAllergies: patientAllergies
-          };
-        fetch('../api/patients_management/add_patient.php',{
-             method: 'POST',
-             headers: {
-              'Content-Type': 'application/json',
+           patientMedicalHistory: patientMedicalHistory,
+            patientAllergies: patientAllergies,
+            admissionType: admissionType,
+            patientStatus: patientStatus,
+            doctorAssigned: doctorAssigned
+         };
+        fetch('/lguHealth/api/patients_management/add_patient.php',{
+           method: 'POST',
+            headers: {
+               'Content-Type': 'application/json',
                },
-              body: JSON.stringify(formData)
-          })
-            .then(response => {
-                 if (!response.ok) {
+                body: JSON.stringify(formData)
+           })
+          .then(response => {
+                if (!response.ok) {
                   throw new Error('Failed to add patient');
-                  }
-                 return response.json();
-              })
+                }
+               return response.json();
+             })
             .then(data => {
                if (data.success) {
-                    alert("Patient Added Successfully");
-                    document.getElementById('patientFilterForm').dispatchEvent(new Event('submit')); //trigger submit for update table
-                     const modal = document.getElementById('addPatientModal');
+                   alert("Patient Added Successfully");
+                     document.getElementById('patientFilterForm').dispatchEvent(new Event('submit')); //trigger submit for update table
+                    const modal = document.getElementById('addPatientModal');
                     const modalInstance = bootstrap.Modal.getInstance(modal);
-                    modalInstance.hide();
+                   modalInstance.hide();
                     document.getElementById('addPatientForm').reset();
                 } else {
-                  alert('Failed to add patient: ' + data.message);
-                }
-             })
-          .catch(error => {
+                   alert('Failed to add patient: ' + data.message);
+              }
+          })
+         .catch(error => {
               console.error('Error:', error);
-                alert('Failed to add patient!');
-            });
-     });
-         // Handle view patient button clicks using javascript
-     document.querySelectorAll('.view-patient-btn').forEach(button => {
-         button.addEventListener('click', function() {
-            const patientId = this.getAttribute('data-patient-id');
-            fetch(`../api/patients_management/get_patient.php?patientId=${patientId}`)
+                 alert('Failed to add patient!');
+          });
+    });
+      // Handle view patient button clicks using javascript
+    document.querySelectorAll('.view-patient-btn').forEach(button => {
+        button.addEventListener('click', function() {
+           const patientId = this.getAttribute('data-patient-id');
+             fetch(`/lguHealth/api/patients_management/get_patient.php?patientId=${patientId}`)
                .then(response => {
                   if (!response.ok) {
-                     throw new Error('Failed to fetch patient details');
+                    throw new Error('Failed to fetch patient details');
                    }
-                 return response.json();
-              })
-              .then(patient => {
-                   document.getElementById('patientIdDisplay').textContent = patient.patient_id;
-                 document.getElementById('patientNameDisplay').textContent = patient.patient_name;
-                  document.getElementById('patientDobDisplay').textContent = patient.date_of_birth;
-                   document.getElementById('patientGenderDisplay').textContent = patient.gender;
-                    document.getElementById('patientContactDisplay').textContent = patient.contact_number;
-                    document.getElementById('patientAddressDisplay').textContent = patient.address;
-                  document.getElementById('patientMedicalHistoryDisplay').textContent = patient.medical_history;
-                   document.getElementById('patientAllergiesDisplay').textContent = patient.allergies;
-                  document.getElementById('editPatientButton').href = `admin_edit_patient.php?id=${patient.patient_id}`;
+                  return response.json();
                })
-               .catch(error => {
-                  console.error('Error:', error);
-                   alert('Failed to fetch patient details');
-              });
-        });
+            .then(patient => {
+                   document.getElementById('patientIdDisplay').textContent = patient.patient_id;
+                  document.getElementById('patientNameDisplay').textContent = patient.patient_name;
+                 document.getElementById('patientDobDisplay').textContent = patient.date_of_birth;
+                  document.getElementById('patientGenderDisplay').textContent = patient.gender;
+                  document.getElementById('patientContactDisplay').textContent = patient.contact_number;
+                 document.getElementById('patientAddressDisplay').textContent = patient.address;
+                  document.getElementById('patientMedicalHistoryDisplay').textContent = patient.medical_history;
+                  document.getElementById('patientAllergiesDisplay').textContent = patient.allergies;
+                   document.getElementById('editPatientButton').href = `admin_edit_patient.php?id=${patient.patient_id}`;
+             })
+             .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to fetch patient details');
+            });
+      });
     });
-
      function displayPatients(patients){
          const tableBody = document.getElementById('patient-table-body');
          tableBody.innerHTML = ''; // Clear existing data
-          patients.forEach(patient => {
-              const row = tableBody.insertRow();
+           patients.forEach(patient => {
+             const row = tableBody.insertRow();
                 row.innerHTML = `
-                   <td>${patient.patient_id}</td>
-                  <td>${patient.patient_name}</td>
-                    <td>${patient.date_of_birth}</td>
-                  <td>${patient.gender}</td>
-                   <td>${patient.contact_number}</td>
-                   <td>
+                  <td>${patient.patient_id}</td>
+                   <td>${patient.patient_name}</td>
+                   <td>${patient.date_of_birth}</td>
+                   <td>${patient.gender}</td>
+                    <td>${patient.contact_number}</td>
+                    <td>
                     <button class="btn btn-sm btn-info view-patient-btn" data-bs-toggle="modal" data-bs-target="#viewPatientModal" data-patient-id="${patient.patient_id}">View</button>
-                    </td>
-                `;
+                       </td>
+               `;
             });
       }
-
+         // Fetch the doctors data and populate the dropdown list
+    fetch('/lguHealth/api/patients_management/get_doctors.php')
+    .then(response => {
+       if (!response.ok) {
+          throw new Error('Failed to fetch doctors');
+        }
+        return response.json();
+       })
+      .then(doctors => {
+            const doctorSelect = document.getElementById('doctorAssigned');
+         doctors.forEach(doctor => {
+                const option = document.createElement('option');
+               option.value = doctor.user_id;
+               option.text = doctor.user_name;
+              if (doctor.patient_count >= 10) {
+                  option.style.color = 'red'; // highlight if the doctor is assigned to 10 or more patients
+               }
+                doctorSelect.appendChild(option);
+           });
+        })
+     .catch(error => {
+          console.error('Error:', error);
+           alert('Failed to fetch doctors');
+     });
+    // Fetch patients on page load
+       document.getElementById('patientFilterForm').dispatchEvent(new Event('submit'));
 </script>
+</body>
+</html>
 </body>
 </html>
