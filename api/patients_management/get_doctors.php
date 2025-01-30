@@ -1,7 +1,7 @@
 <?php
 session_start();
 header('Content-Type: application/json');
-include('../../admin/assets/config/dbconn.php');
+include('../config/dbconn.php');
 
 $stmt = $conn->prepare("SELECT u.user_id, u.user_name, COUNT(da.patient_id) AS patient_count
                         FROM users u

@@ -1,7 +1,7 @@
 <?php
 session_start();
 header('Content-Type: application/json');
-include('../../admin/assets/config/dbconn.php');
+include('../config/dbconn.php');
 
 $where_clause = "1=1";
 

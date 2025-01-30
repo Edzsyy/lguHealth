@@ -1,5 +1,5 @@
 <?php
-include('../admin/assets/config/dbconn.php');
+include('../api/config/dbconn.php');
 include('../admin/assets/inc/header.php');
 include('../admin/assets/inc/sidebar.php');
 include('../admin/assets/inc/navbar.php');

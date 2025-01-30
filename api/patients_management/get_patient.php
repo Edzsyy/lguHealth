@@ -2,7 +2,7 @@
 session_start();
 error_log(print_r($_POST, true)); 
 header('Content-Type: application/json');
-include('../../admin/assets/config/dbconn.php');
+include('../config/dbconn.php');
 
 try {
     if ($conn->connect_error) {
