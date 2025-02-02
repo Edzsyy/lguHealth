@@ -2,7 +2,7 @@
 session_start();
 // Set response header to JSON
 header('Content-Type: application/json');
-include('../config/dbconn.php');
+include('../api/config/dbconn.php');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = json_decode(file_get_contents("php://input"), true);
