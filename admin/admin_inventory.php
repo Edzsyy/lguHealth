@@ -419,7 +419,7 @@ function fetchInventoryItem(itemId) {
                 document.getElementById('view-quantity').textContent = item.quantity;
                 document.getElementById('view-unit-price').textContent = item.unit_price;
                 document.getElementById('view-created-by').innerText = item.created_by_name; // Show the name
-                document.getElementById('view-modified-by').innerText = item.modified_by_name; // Show the name
+                document.getElementById('view-modified-by').innerText = item.updated_by_name; // Show the name
                 document.getElementById('view-created-at').textContent = item.created_at;
                 document.getElementById('view-updated-at').textContent = item.updated_at;
             } else {
