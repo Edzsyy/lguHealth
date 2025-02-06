@@ -162,12 +162,11 @@ include('../admin/assets/inc/navbar.php');
                 <p><strong>Patient Status:</strong> <span id="patientStatusDisplay"></span></p>
                 <p><strong>Medical History:</strong> <span id="patientMedicalHistoryDisplay"></span></p>
                 <p><strong>Allergies:</strong> <span id="patientAllergiesDisplay"></span></p>
-                <button id="editPatientButton" class="btn btn-sm btn-primary">Edit</button>
               </div>
 
               <!-- Middle Column: Diagnostic/Checkup Part -->
               <div class="col-md-4">
-                <h4>Diagnostic or Checkup Part</h4>
+                <h4>Diagnostic or Checkup</h4>
                 <div id="symptomsAccordion">
                   <div class="accordion-item">
                     <h2 class="accordion-header" id="headingGeneral">
@@ -443,32 +442,58 @@ include('../admin/assets/inc/navbar.php');
                         </div>
                       </div>
                     </div>
+                    <button id="clearSymptomsBtn" class="btn btn-secondary  mt-3">Clear Selection</button>
                   </div>
                 </div>
                 <div class="mt-3">
                   <h5>Detailed Explanation</h5>
-                  <textarea class="form-control" id="detailedExplanation" rows="3"></textarea>
+                  <textarea class="form-control" id="detailedExplanation" rows="3" style="
+    overflow-y:auto; 
+    resize: none;
+    transition: height 3.3s ease-in-out;
+    min-height: 300px;"></textarea>
                 </div>
-                <div class="mt-3">
-                  <h5>Gemini AI Suggestions for the Sickness</h5>
-                  <textarea class="form-control" id="aiSuggestions" rows="3" readonly></textarea>
+                <h5>Result</h5>
+                <div>
+                  <h6>Detailed Confirmed Sickness Description With Medication</h6>
+                  <textarea class="form-control" id="sicknessDescription" rows="3" style="
+    overflow-y:auto; 
+    resize: none;
+    transition: height 3.3s ease-in-out;
+    min-height: 300px;"></textarea>
                 </div>
-                <button class="btn btn-secondary mt-3" id="generateResultButton">Generate Result</button>
-                <button class="btn btn-secondary mt-3">Add to Result</button>
+                <button class="btn btn-secondary mt-3" id="publishBtn">Publish Result</button>
               </div>
+
+
+
+
 
               <!-- Right Column: Result -->
               <div class="col-md-4">
-                <h4>Result</h4>
-                <div>
-                  <h5>Detailed Confirmed Sickness Description</h5>
-                  <textarea class="form-control" id="sicknessDescription" rows="3" readonly></textarea>
+                <h4>Ask AI Assistant</h4>
+                <div class="mt-3">
+                  <h5>AI possible Sickness Suggestions</h5>
+                  <textarea class="form-control" id="aiSuggestions" rows="3" readonly style="
+    overflow-y:auto; 
+    resize: none;
+    transition: height 3.3s ease-in-out;
+    min-height: 200px;"></textarea>
                 </div>
                 <div class="mt-3">
-                  <h5>Gemini AI Suggestions for Health Recovery</h5>
-                  <textarea class="form-control" id="healthRecovery" rows="3" readonly></textarea>
+                  <h5>AI Health Recovery Suggestions</h5>
+                  <textarea class="form-control" id="healthRecovery" rows="3" readonly style="
+    overflow-y: auto; 
+    resize: none;
+    transition: height 3.3s ease-in-out;
+    min-height: 200px;"></textarea>
+                </div>
+                <button class="btn btn-secondary mt-3" id="generateResultButton">Generate Result</button>
+                <div id="loadingIndicator" style="display: none;">
+                  <span class="spinner-border text-primary" role="status"></span> Generating AI suggestions...
                 </div>
               </div>
+
             </div>
           </div>
         </div>
@@ -547,7 +572,7 @@ include('../admin/assets/inc/navbar.php');
   });
 
 
-  // Javascript implementation, You will have to implement the save data with php
+  // Add patient button
   document.getElementById('addPatientForm').addEventListener('submit', function(event) {
     event.preventDefault(); // Prevent the form from submitting normally
     // Get form values (you can add validation in here)
@@ -647,7 +672,198 @@ include('../admin/assets/inc/navbar.php');
       })
       .catch(error => console.error('Error:', error));
   }
+  //display selected symptoms in list
+  document.addEventListener("DOMContentLoaded", function() {
+    const symptomCheckboxes = document.querySelectorAll(".form-check-input");
+    const selectedSymptomsContainer = document.createElement("div");
+    selectedSymptomsContainer.id = "selectedSymptomsContainer";
+    selectedSymptomsContainer.innerHTML = `
+        <h5><strong>Selected Symptoms:</strong></h5>
+        <ul id='selectedSymptomsList' class="list-group"></ul>
+    `;
+    document.querySelector("#symptomsAccordion").insertAdjacentElement("afterend", selectedSymptomsContainer);
 
+    const generateButton = document.getElementById('generateResultButton');
+    const clearSymptomsBtn = document.getElementById("clearSymptomsBtn");
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    const aiSuggestions = document.getElementById('aiSuggestions');
+    const healthRecovery = document.getElementById('healthRecovery');
+
+    // Function to get selected symptoms
+    function getSelectedSymptoms() {
+      return Array.from(symptomCheckboxes)
+        .filter(checkbox => checkbox.checked)
+        .map(checkbox => checkbox.value);
+    }
+
+    // Function to update selected symptoms display
+    function updateSelectedSymptoms() {
+      const selectedSymptomsList = document.getElementById("selectedSymptomsList");
+      selectedSymptomsList.innerHTML = "";
+
+      const selectedSymptoms = getSelectedSymptoms();
+
+      if (selectedSymptoms.length === 0) {
+        selectedSymptomsList.innerHTML = `<li class="list-group-item text-muted">No symptoms selected</li>`;
+      } else {
+        selectedSymptoms.forEach(symptom => {
+          const listItem = document.createElement("li");
+          listItem.textContent = symptom;
+          listItem.classList.add("list-group-item");
+          selectedSymptomsList.appendChild(listItem);
+        });
+      }
+    }
+
+    // Function to show/hide loading indicator
+    function toggleLoading(show) {
+      loadingIndicator.style.display = show ? 'block' : 'none';
+      if (generateButton) generateButton.disabled = show;
+    }
+
+    // Handle AI Suggestion Generation
+    if (generateButton) {
+      generateButton.addEventListener('click', function() {
+        const symptoms = getSelectedSymptoms();
+        const explanation = document.getElementById('detailedExplanation').value.trim();
+
+        // Validation Checks
+        if (symptoms.length === 0) {
+          alert('⚠ Please select at least one symptom.');
+          return;
+        }
+        if (!explanation) {
+          alert('⚠ Please provide a detailed explanation.');
+          return;
+        }
+
+        // Prepare Data to Send
+        const formData = {
+          symptoms,
+          explanation
+        };
+
+        // Show Loading Indicator
+        toggleLoading(true);
+
+        // Fetch API Request
+        fetch('../api/gemini/generate_suggestions.php', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+          })
+          .then(response => response.json())
+          .then(data => {
+            aiSuggestions.textContent = data.aiSickness || "⚠ No diagnosis available.";
+            healthRecovery.textContent = data.aiHealth || "⚠ No recommendations available.";
+            autoExpandTextarea();
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            alert('❌ An error occurred while generating suggestions.');
+          })
+          .finally(() => toggleLoading(false)); // Hide Loading Indicator
+      });
+    }
+
+    function autoExpandTextarea() {
+      const textarea = document.getElementById('aiSuggestions');
+
+      // Reset height to auto before calculating new height
+      textarea.style.height = 'auto';
+
+      // Set new height based on scrollHeight
+      textarea.style.height = textarea.scrollHeight + 'px';
+    }
+
+
+    // Clear Selection Button Functionality
+    function clearAllSymptoms() {
+      symptomCheckboxes.forEach(checkbox => checkbox.checked = false);
+      updateSelectedSymptoms();
+    }
+
+    // Add event listeners to checkboxes
+    symptomCheckboxes.forEach(checkbox => checkbox.addEventListener("change", updateSelectedSymptoms));
+
+    // Add event listener for clearing symptoms
+    if (clearSymptomsBtn) {
+      clearSymptomsBtn.addEventListener("click", clearAllSymptoms);
+    }
+
+    // Initialize with no symptoms selected
+    updateSelectedSymptoms();
+
+
+
+//publish button
+    const publishBtn = document.getElementById('publishBtn');
+    if (publishBtn) {
+        publishBtn.addEventListener('click', publishResult);
+    } else {
+        console.error("publishBtn element not found!");
+    }
+
+    //Process the publish result
+    function publishResult() {
+    // Get selected symptoms using the existing function
+    const selectedSymptoms = getSelectedSymptoms();
+    // Get the patientId from the span element and convert it to a number
+    const patientIdString = document.getElementById('patientIdDisplay').textContent.trim();
+        const patientId = parseInt(patientIdString, 10);
+
+    // Get the detailed explanation
+    const detailedExplanation = document.getElementById('detailedExplanation').value.trim();
+
+    // Get the confirmed sickness description with medication
+    const sicknessDescription = document.getElementById('sicknessDescription').value.trim();
+
+    // Validation
+    if (selectedSymptoms.length === 0) {
+        alert('⚠ Please select at least one symptom.');
+        return;
+    }
+    if (!detailedExplanation) {
+        alert('⚠ Please provide a detailed explanation.');
+        return;
+    }
+    if (!sicknessDescription) {
+        alert('⚠ Please provide a detailed confirmed sickness description with medication.');
+        return;
+    }
+
+    // Prepare data to send
+    const formData = {
+        symptoms: selectedSymptoms,
+        explanation: detailedExplanation,
+        sicknessDescription: sicknessDescription,
+        patientId: patientId
+    };
+
+    // Send data to the backend
+    fetch('../api/patients_management/publish_result.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('✅ Result published successfully!');
+        } else {
+            alert(`❌ Failed to publish result: ${data.message}`);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('❌ An error occurred while publishing the result.');
+    });
+}
+
+
+  });
 
 
 

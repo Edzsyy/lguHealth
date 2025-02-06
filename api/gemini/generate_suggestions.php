@@ -23,7 +23,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Construct a well-formatted prompt
         $prompt = "Based on the following symptoms: " . implode(", ", $symptoms) . "\n";
         $prompt .= "And this explanation by a doctor/nurse: " . $explanation . "\n";
-        $prompt .= "What are the likely diagnoses, and what are the recommendations for health recovery? Please provide a brief, clear diagnosis and actionable health recovery tips.";
+        $prompt .= "Please provide the following information:\n";
+        $prompt .= "1. The likely diagnoses (a short list).\n";
+        $prompt .= "2. Recommendations for health recovery (clear and actionable tips list it in number order).";
 
         // Call the Gemini API
         $geminiResponse = getGeminiAiSuggestions($prompt, $geminiApiKey);
@@ -47,17 +49,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $conn->close();
 
 // Function to call the Gemini AI API
-function getGeminiAiSuggestions($prompt, $apiKey) {
+function getGeminiAiSuggestions($prompt, $apiKey)
+{
     $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" . $apiKey;
 
-    // Data to send in the request
     $data = [
         'contents' => [
             ['parts' => [['text' => $prompt]]]
         ]
     ];
 
-    // HTTP headers
     $headers = [
         'Content-Type: application/json'
     ];
@@ -78,19 +79,25 @@ function getGeminiAiSuggestions($prompt, $apiKey) {
 
     curl_close($ch);
 
-    // Process the response from Gemini API
     $responseData = json_decode($response, true);
 
-    // Check if the response contains valid AI output
     if (isset($responseData['candidates'][0]['content']['parts'][0]['text'])) {
+        // Split response text into diagnoses and recommendations
+        $responseText = $responseData['candidates'][0]['content']['parts'][0]['text'];
+
+        // Split the response into two parts based on the prompt structure
+        $responseParts = preg_split('/\n\s*2\.\s*/', $responseText, 2);
+
+        $aiSickness = isset($responseParts[0]) ? $responseParts[0] : "No diagnoses provided.";
+        $aiHealth = isset($responseParts[1]) ? $responseParts[1] : "No recovery recommendations provided.";
+
         return [
             'success' => true,
-            'aiSickness' => "Possible diagnoses: " . $responseData['candidates'][0]['content']['parts'][0]['text'],
-            'aiHealth' => "Recommendations for health recovery: " . $responseData['candidates'][0]['content']['parts'][0]['text']
+            'aiSickness' => $aiSickness,
+            'aiHealth' => $aiHealth
         ];
     } else {
         error_log("Gemini API response structure is incorrect: " . json_encode($responseData));
         return ['success' => false, 'message' => 'Gemini API response structure is incorrect'];
     }
 }
-?>

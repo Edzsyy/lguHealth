@@ -620,6 +620,25 @@ main {
        border-bottom: 1px solid var(--color-divider-color);
 }
 
+#aiSuggestions {
+    overflow-y: hidden; /* Prevents scrollbar appearance */
+    resize: none; /* Disables manual resizing */
+    transition: height 0.3s ease-in-out; /* Smooth expansion */
+    height: auto; /* Allow height to change dynamically */
+    min-height: 80px; /* Set a minimum height for the textarea */
+  }
+  #healthRecovery {
+    overflow-y: hidden; /* Prevents scrollbar appearance */
+    resize: none; /* Disables manual resizing */
+    transition: height 0.3s ease-in-out; /* Smooth expansion */
+    height: auto; /* Allow height to change dynamically */
+    min-height: 80px; /* Set a minimum height for the textarea */
+  }
+  
+  
+
+
+
 @media screen and (max-width: 768px){
     #topbar{
         position: relative;
