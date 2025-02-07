@@ -138,6 +138,27 @@ include('../admin/assets/inc/navbar.php');
     </div>
   </div>
 
+  <!-- Diagnostic Result Modal -->
+<div class="modal fade" id="diagnosticResultModal" tabindex="-1" aria-labelledby="diagnosticResultModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="diagnosticResultModalLabel">Diagnostic Result</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Patient Symptoms:</strong> <span id="patientSymptomsDisplay"></span></p>
+                <p><strong>Detailed Explanation:</strong></p>
+                <textarea class="form-control" id="patientDetailExplanationDisplay" rows="4" readonly style="overflow-y:auto;resize: none;"></textarea>
+                <p><strong>Sickness Description and Approved Medication:</strong></p>
+                <textarea class="form-control" id="patientSicknessDescriptionDisplay" rows="6" readonly style="overflow-y:auto;resize: none;"></textarea>
+                <p><strong>Published By:</strong> <span id="publishedByDisplay"></span></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
   <!-- View Patient Modal -->
   <div class="modal fade" id="viewPatientModal" tabindex="-1" aria-labelledby="viewPatientModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl"> <!-- Use modal-xl for a larger modal -->
@@ -547,6 +568,7 @@ include('../admin/assets/inc/navbar.php');
                        <td>
                          <button class="btn btn-sm btn-info view-patient-btn" data-bs-toggle="modal" data-bs-target="#viewPatientModal" data-patient-id="${patient.patient_id}">View</button>
                          <a href="admin_edit_patient.php?id=${patient.patient_id}" class="btn btn-sm btn-primary">Edit</a>
+                         <button class="btn btn-sm btn-success view-diagnostic-btn" data-bs-toggle="modal" data-bs-target="#diagnosticResultModal" data-patient-id="${patient.patient_id}">View Diagnostic</button>
                          </td>
                       `;
     });
@@ -666,6 +688,16 @@ include('../admin/assets/inc/navbar.php');
           document.getElementById('patientAllergiesDisplay').textContent = patient.allergies;
           document.getElementById('patientAdmissionTypeDisplay').textContent = patient.admission_type;
           document.getElementById('patientStatusDisplay').textContent = patient.patient_status;
+          // Ensure symptoms exist before joining
+          document.getElementById('patientSymptomsDisplay').value = Array.isArray(patient.selectedSymptoms) ?
+            patient.selectedSymptoms.join(", ") :
+            "No symptoms recorded";
+
+          // Set explanation and sickness description (handle null values)
+          document.getElementById('patientDetailExplanationDisplay').value =
+            patient.detailedExplanation || "No detailed explanation available";
+          document.getElementById('patientSicknessDescriptionDisplay').value =
+            patient.sicknessDescription || "No sickness description available";
         } else {
           alert('Failed to retrieve item details.');
         }
@@ -798,72 +830,119 @@ include('../admin/assets/inc/navbar.php');
 
 
 
-//publish button
+    //publish button
     const publishBtn = document.getElementById('publishBtn');
     if (publishBtn) {
-        publishBtn.addEventListener('click', publishResult);
+      publishBtn.addEventListener('click', publishResult);
     } else {
-        console.error("publishBtn element not found!");
+      console.error("publishBtn element not found!");
     }
 
     //Process the publish result
     function publishResult() {
-    // Get selected symptoms using the existing function
-    const selectedSymptoms = getSelectedSymptoms();
-    // Get the patientId from the span element and convert it to a number
-    const patientIdString = document.getElementById('patientIdDisplay').textContent.trim();
-        const patientId = parseInt(patientIdString, 10);
+      // Get selected symptoms using the existing function
+      const selectedSymptoms = getSelectedSymptoms();
+      // Get the patientId from the span element and convert it to a number
+      const patientIdString = document.getElementById('patientIdDisplay').textContent.trim();
+      const patientId = parseInt(patientIdString, 10);
 
-    // Get the detailed explanation
-    const detailedExplanation = document.getElementById('detailedExplanation').value.trim();
+      // Get the detailed explanation
+      const detailedExplanation = document.getElementById('detailedExplanation').value.trim();
 
-    // Get the confirmed sickness description with medication
-    const sicknessDescription = document.getElementById('sicknessDescription').value.trim();
+      // Get the confirmed sickness description with medication
+      const sicknessDescription = document.getElementById('sicknessDescription').value.trim();
 
-    // Validation
-    if (selectedSymptoms.length === 0) {
+      // Validation
+      if (selectedSymptoms.length === 0) {
         alert('⚠ Please select at least one symptom.');
         return;
-    }
-    if (!detailedExplanation) {
+      }
+      if (!detailedExplanation) {
         alert('⚠ Please provide a detailed explanation.');
         return;
-    }
-    if (!sicknessDescription) {
+      }
+      if (!sicknessDescription) {
         alert('⚠ Please provide a detailed confirmed sickness description with medication.');
         return;
-    }
+      }
 
-    // Prepare data to send
-    const formData = {
+      // Prepare data to send
+      const formData = {
         symptoms: selectedSymptoms,
         explanation: detailedExplanation,
         sicknessDescription: sicknessDescription,
         patientId: patientId
-    };
+      };
 
-    // Send data to the backend
-    fetch('../api/patients_management/publish_result.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
+      // Send data to the backend
+      fetch('../api/patients_management/publish_result.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
             alert('✅ Result published successfully!');
-        } else {
+            document.getElementById('patientSymptomsDisplay').value = selectedSymptoms.join(", ");
+            document.getElementById('patientDetailExplanationDisplay').value = detailedExplanation;
+            document.getElementById('patientSicknessDescriptionDisplay').value = sicknessDescription;
+          } else {
             alert(`❌ Failed to publish result: ${data.message}`);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('❌ An error occurred while publishing the result.');
-    });
-}
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('❌ An error occurred while publishing the result.');
+        });
+    }
 
 
   });
+  document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('click', function (event) {
+        if (event.target.classList.contains('view-diagnostic-btn')) {
+            const patientId = event.target.getAttribute('data-patient-id');
+            fetchDiagnosticResult(patientId);
+        }
+    });
+});
+
+function fetchDiagnosticResult(patientId) {
+    fetch(`../api/patients_management/get_diagnostic_result.php?patientId=${patientId}`)
+        .then(response => response.json())
+        .then(data => {
+            console.log("API Response:", data); // Debugging output
+
+            if (data.success) {
+                const diagnostic = data.data;
+
+                // ✅ Correctly set values
+                document.getElementById('patientSymptomsDisplay').textContent =
+                    diagnostic.selectedSymptoms.length ? diagnostic.selectedSymptoms.join(", ") : "No symptoms recorded";
+
+                document.getElementById('patientDetailExplanationDisplay').value =
+                    diagnostic.detailedExplanation || "No detailed explanation available";
+
+                document.getElementById('patientSicknessDescriptionDisplay').value =
+                    diagnostic.sicknessDescription || "No sickness description available";
+
+                document.getElementById('publishedByDisplay').textContent =
+                    diagnostic.published_by_name || "Unknown User";
+
+            } else {
+                alert('❌ Failed to retrieve diagnostic results: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('❌ An error occurred while fetching the diagnostic data.');
+        });
+}
+
+
 
 
 

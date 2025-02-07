@@ -21,7 +21,7 @@ try {
         }
 
         // Prepare and execute the query
-        $stmt = $conn->prepare("SELECT patient_id, patient_name, date_of_birth, gender, contact_number, address, medical_history, allergies, admission_type, age, patient_status FROM patients WHERE patient_id = ?");
+        $stmt = $conn->prepare("SELECT * FROM patients WHERE patient_id = ?");
         $stmt->bind_param("i", $patientId);
         $stmt->execute();
         $result = $stmt->get_result();

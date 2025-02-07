@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         published_by = ? WHERE patient_id = ?";
 
         $stmt = $conn->prepare($query);
-        $stmt->bind_param("ssiii", $symptoms, $explanation, $sicknessDescription, $publishedBy, $patientId);
+        $stmt->bind_param("sssii", $symptoms, $explanation, $sicknessDescription, $publishedBy, $patientId);
 
         if ($stmt->execute()) {
             echo json_encode(['success' => true, 'message' => 'Information updated successfully']);
