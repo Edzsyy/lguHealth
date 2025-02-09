@@ -69,7 +69,7 @@ include('../admin/assets/inc/navbar.php');
                   <tr>
                     <th>Patient ID</th>
                     <th>Name</th>
-                    <th>Date of Birth</th>
+                    <th>Age</th>
                     <th>Gender</th>
                     <th>Admission Type</th>
                     <th>Patient Status</th>
@@ -139,29 +139,29 @@ include('../admin/assets/inc/navbar.php');
   </div>
 
   <!-- Diagnostic Result Modal -->
-<div class="modal fade" id="diagnosticResultModal" tabindex="-1" aria-labelledby="diagnosticResultModalLabel" aria-hidden="true">
+  <div class="modal fade" id="diagnosticResultModal" tabindex="-1" aria-labelledby="diagnosticResultModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="diagnosticResultModalLabel">Diagnostic Result</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p><strong>Patient Symptoms:</strong> <span id="patientSymptomsDisplay"></span></p>
-                <p><strong>Detailed Explanation:</strong></p>
-                <textarea class="form-control" id="patientDetailExplanationDisplay" rows="4" readonly style="overflow-y:auto;resize: none;"></textarea>
-                <p><strong>Sickness Description and Approved Medication:</strong></p>
-                <textarea class="form-control" id="patientSicknessDescriptionDisplay" rows="6" readonly style="overflow-y:auto;resize: none;"></textarea>
-                <p><strong>Published By:</strong> <span id="publishedByDisplay"></span></p>
-            </div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="diagnosticResultModalLabel">Diagnostic Result</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
+        <div class="modal-body">
+          <p><strong>Patient Symptoms:</strong> <span id="patientSymptomsDisplay"></span></p>
+          <p><strong>Detailed Explanation:</strong></p>
+          <textarea class="form-control" id="patientDetailExplanationDisplay" rows="4" readonly style="overflow-y:auto;resize: none;"></textarea>
+          <p><strong>Sickness Description and Approved Medication:</strong></p>
+          <textarea class="form-control" id="patientSicknessDescriptionDisplay" rows="6" readonly style="overflow-y:auto;resize: none;"></textarea>
+          <p><strong>Published By:</strong> <span id="publishedByDisplay"></span></p>
+        </div>
+      </div>
     </div>
-</div>
+  </div>
 
 
   <!-- View Patient Modal -->
   <div class="modal fade" id="viewPatientModal" tabindex="-1" aria-labelledby="viewPatientModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl"> <!-- Use modal-xl for a larger modal -->
+    <div class="modal-dialog modal-xl">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="viewPatientModalLabel">Patient Details and Checkup</h5>
@@ -176,6 +176,7 @@ include('../admin/assets/inc/navbar.php');
                 <p><strong>Patient ID:</strong> <span id="patientIdDisplay"></span></p>
                 <p><strong>Name:</strong> <span id="patientNameDisplay"></span></p>
                 <p><strong>Date of Birth:</strong> <span id="patientDobDisplay"></span></p>
+                <p><strong>Age:</strong> <span id="patientAgeDisplay"></span></p>
                 <p><strong>Gender:</strong> <span id="patientGenderDisplay"></span></p>
                 <p><strong>Contact Number:</strong> <span id="patientContactDisplay"></span></p>
                 <p><strong>Address:</strong> <span id="patientAddressDisplay"></span></p>
@@ -494,20 +495,12 @@ include('../admin/assets/inc/navbar.php');
               <div class="col-md-4">
                 <h4>Ask AI Assistant</h4>
                 <div class="mt-3">
-                  <h5>AI possible Sickness Suggestions</h5>
+                  <h5>AI possible Sickness Suggestions And Health Recovery Recommendations</h5>
                   <textarea class="form-control" id="aiSuggestions" rows="3" readonly style="
     overflow-y:auto; 
     resize: none;
     transition: height 3.3s ease-in-out;
-    min-height: 200px;"></textarea>
-                </div>
-                <div class="mt-3">
-                  <h5>AI Health Recovery Suggestions</h5>
-                  <textarea class="form-control" id="healthRecovery" rows="3" readonly style="
-    overflow-y: auto; 
-    resize: none;
-    transition: height 3.3s ease-in-out;
-    min-height: 200px;"></textarea>
+    min-height: 400px;"></textarea>
                 </div>
                 <button class="btn btn-secondary mt-3" id="generateResultButton">Generate Result</button>
                 <div id="loadingIndicator" style="display: none;">
@@ -566,9 +559,8 @@ include('../admin/assets/inc/navbar.php');
                       <td>${patient.admission_type}</td>
                       <td>${patient.patient_status}</td>
                        <td>
-                         <button class="btn btn-sm btn-info view-patient-btn" data-bs-toggle="modal" data-bs-target="#viewPatientModal" data-patient-id="${patient.patient_id}">View</button>
-                         <a href="admin_edit_patient.php?id=${patient.patient_id}" class="btn btn-sm btn-primary">Edit</a>
-                         <button class="btn btn-sm btn-success view-diagnostic-btn" data-bs-toggle="modal" data-bs-target="#diagnosticResultModal" data-patient-id="${patient.patient_id}">View Diagnostic</button>
+                         <button class="btn btn-sm btn-info view-patient-btn" data-bs-toggle="modal" data-bs-target="#viewPatientModal" data-patient-id="${patient.patient_id}">Conduct Diagnostic</button>
+                         <button class="btn btn-sm btn-success view-diagnostic-btn" data-bs-toggle="modal" data-bs-target="#diagnosticResultModal" data-patient-id="${patient.patient_id}">Diagnostic Result</button>
                          </td>
                       `;
     });
@@ -661,7 +653,7 @@ include('../admin/assets/inc/navbar.php');
   });
 
 
-  //view modal function
+  //Conduct diagnostic modal function
   document.addEventListener('DOMContentLoaded', function() {
     document.addEventListener('click', function(event) {
       if (event.target.classList.contains('view-patient-btn')) {
@@ -670,7 +662,7 @@ include('../admin/assets/inc/navbar.php');
       }
     });
   });
-
+//display patient details
   function fetchPatientItem(patientId) {
     fetch(`../api/patients_management/get_patient.php?patientId=${patientId}`)
       .then(response => response.json())
@@ -681,6 +673,7 @@ include('../admin/assets/inc/navbar.php');
           document.getElementById('patientIdDisplay').textContent = patient.patient_id;
           document.getElementById('patientNameDisplay').textContent = patient.patient_name;
           document.getElementById('patientDobDisplay').textContent = patient.date_of_birth;
+          document.getElementById('patientAgeDisplay').textContent = patient.age;
           document.getElementById('patientGenderDisplay').textContent = patient.gender;
           document.getElementById('patientContactDisplay').textContent = patient.contact_number;
           document.getElementById('patientAddressDisplay').textContent = patient.address;
@@ -788,9 +781,9 @@ include('../admin/assets/inc/navbar.php');
           })
           .then(response => response.json())
           .then(data => {
-            aiSuggestions.textContent = data.aiSickness || "⚠ No diagnosis available.";
-            healthRecovery.textContent = data.aiHealth || "⚠ No recommendations available.";
-            autoExpandTextarea();
+            const combinedResult = `${data.aiSickness || "⚠ No diagnosis available."}\n\n${data.aiHealth || "⚠ No recommendations available."}`;
+            // Display in a single text area
+            aiSuggestions.textContent = combinedResult;
           })
           .catch(error => {
             console.error('Error:', error);
@@ -874,7 +867,7 @@ include('../admin/assets/inc/navbar.php');
         patientId: patientId
       };
 
-      // Send data to the backend
+      // Diagnotic modal 
       fetch('../api/patients_management/publish_result.php', {
           method: 'POST',
           headers: {
@@ -901,46 +894,46 @@ include('../admin/assets/inc/navbar.php');
 
 
   });
-  document.addEventListener('DOMContentLoaded', function () {
-    document.addEventListener('click', function (event) {
-        if (event.target.classList.contains('view-diagnostic-btn')) {
-            const patientId = event.target.getAttribute('data-patient-id');
-            fetchDiagnosticResult(patientId);
-        }
+  document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('click', function(event) {
+      if (event.target.classList.contains('view-diagnostic-btn')) {
+        const patientId = event.target.getAttribute('data-patient-id');
+        fetchDiagnosticResult(patientId);
+      }
     });
-});
+  });
 
-function fetchDiagnosticResult(patientId) {
+  function fetchDiagnosticResult(patientId) {
     fetch(`../api/patients_management/get_diagnostic_result.php?patientId=${patientId}`)
-        .then(response => response.json())
-        .then(data => {
-            console.log("API Response:", data); // Debugging output
+      .then(response => response.json())
+      .then(data => {
+        console.log("API Response:", data); // Debugging output
 
-            if (data.success) {
-                const diagnostic = data.data;
+        if (data.success) {
+          const diagnostic = data.data;
 
-                // ✅ Correctly set values
-                document.getElementById('patientSymptomsDisplay').textContent =
-                    diagnostic.selectedSymptoms.length ? diagnostic.selectedSymptoms.join(", ") : "No symptoms recorded";
+          // ✅ Correctly set values
+          document.getElementById('patientSymptomsDisplay').textContent =
+            diagnostic.selectedSymptoms.length ? diagnostic.selectedSymptoms.join(", ") : "No symptoms recorded";
 
-                document.getElementById('patientDetailExplanationDisplay').value =
-                    diagnostic.detailedExplanation || "No detailed explanation available";
+          document.getElementById('patientDetailExplanationDisplay').value =
+            diagnostic.detailedExplanation || "No detailed explanation available";
 
-                document.getElementById('patientSicknessDescriptionDisplay').value =
-                    diagnostic.sicknessDescription || "No sickness description available";
+          document.getElementById('patientSicknessDescriptionDisplay').value =
+            diagnostic.sicknessDescription || "No sickness description available";
 
-                document.getElementById('publishedByDisplay').textContent =
-                    diagnostic.published_by_name || "Unknown User";
+          document.getElementById('publishedByDisplay').textContent =
+            diagnostic.published_by_name || "Unknown User";
 
-            } else {
-                alert('❌ Failed to retrieve diagnostic results: ' + data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('❌ An error occurred while fetching the diagnostic data.');
-        });
-}
+        } else {
+          alert('❌ Failed to retrieve diagnostic results: ' + data.message);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('❌ An error occurred while fetching the diagnostic data.');
+      });
+  }
 
 
 

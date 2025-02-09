@@ -23,9 +23,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Construct a well-formatted prompt
         $prompt = "Based on the following symptoms: " . implode(", ", $symptoms) . "\n";
         $prompt .= "And this explanation by a doctor/nurse: " . $explanation . "\n";
-        $prompt .= "Please provide the following information:\n";
+        $prompt .= "Generate a professional suggestion. The message should be clear, formal, and assistive to the doctor(use scientific name technical jargon for better undestanding of the doctor) .\n";
         $prompt .= "1. The likely diagnoses (a short list).\n";
-        $prompt .= "2. Recommendations for health recovery (clear and actionable tips list it in number order).";
+        $prompt .= "2. Recommendations for health recovery and proper medication comsumption (clear and actionable tips list it in number order).";
 
         // Call the Gemini API
         $geminiResponse = getGeminiAiSuggestions($prompt, $geminiApiKey);
