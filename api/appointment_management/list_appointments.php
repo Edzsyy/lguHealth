@@ -54,6 +54,7 @@ $sql = "SELECT
     appointments.patient_name, 
     users.user_name AS doctor_name,  
     appointments.appointment_date, 
+    appointments.appointment_time,
     appointments.status, 
     appointments.notes 
 FROM appointments 

@@ -635,7 +635,16 @@ main {
     min-height: 80px; /* Set a minimum height for the textarea */
   }
   
-  
+  .is-valid {
+    border-color: #198754 !important;
+    box-shadow: 0 0 5px #198754 !important;
+}
+
+.is-invalid {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 5px #dc3545 !important;
+}
+
 
 
 

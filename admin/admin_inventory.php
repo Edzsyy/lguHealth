@@ -8,7 +8,7 @@ include('../admin/assets/inc/navbar.php');
     <div class="container mt-4">
         <h1>Inventory Management</h1>
         <!-- Summary Cards (Leave as is for now) -->
-        <div class="row g-4 mb-4">
+        <!-- <div class="row g-4 mb-4">
             <div class="col-sm-6 col-lg-3">
                 <div class="card shadow-sm text-center">
                     <div class="card-body">
@@ -49,7 +49,7 @@ include('../admin/assets/inc/navbar.php');
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
 
         <div class="row">
             <div class="col-12">

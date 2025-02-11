@@ -7,9 +7,9 @@
         <li><a href="admin_patients.php"><i class='bx bxs-user-plus icon'></i>Patients</a></li>
         <li><a href="admin_appointment.php"><i class='bx bxs-calendar-plus icon'></i>Appointments</a></li>
         <li><a href="admin_inventory.php"><i class='bx bxs-capsule icon'></i>Inventory</a></li>
-        <li><a href="admin_inventoryReport.php"><i class='bx bxs-report icon'></i>Inventory Report</a></li>
+        <!-- <li><a href="admin_inventoryReport.php"><i class='bx bxs-report icon'></i>Inventory Report</a></li> -->
         <!-- <li><a href="admin_billing.php"><i class='bx bxs-credit-card-alt icon'></i>Billing</a></li> -->
-        <li><a href="admin_policies.php"><i class='bx bx-clipboard icon'></i>Policies</a></li>
+        <!-- <li><a href="admin_policies.php"><i class='bx bx-clipboard icon'></i>Policies</a></li> -->
 
         <!-- Add Business List Here -->
 
