@@ -6,11 +6,11 @@ include('../api/config/dbconn.php');
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = json_decode(file_get_contents("php://input"), true);
     
-    if(isset($data['email']) && isset($data['password'])){
+    if (isset($data['email']) && isset($data['password'])) {
         $email = trim($data['email']);
         $password = $data['password'];
 
-        // Check in users table first
+        // Check users table first
         $stmt = $conn->prepare("SELECT user_id, password, role FROM users WHERE email = ?");
         $stmt->bind_param("s", $email);
         $stmt->execute();
@@ -22,14 +22,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if (password_verify($password, $hashed_password)) {
                 $_SESSION['user_id'] = $user_id;
-                $_SESSION['role'] = ucfirst(strtolower($role)); // Standardize role casing
+                $_SESSION['role'] = ucfirst(strtolower($role));
 
-                echo json_encode(['success' => true, 'role' => ucfirst(strtolower($role))]);
+                echo json_encode([
+                    'success' => true,
+                    'role' => ucfirst(strtolower($role)),
+                    'session' => $_SESSION
+                ]);
                 exit;
             }
         }
 
-        // If not found in users, check clients table
+        // Check clients table
         $stmt = $conn->prepare("SELECT client_id, password FROM clients WHERE email = ?");
         $stmt->bind_param("s", $email);
         $stmt->execute();
@@ -40,10 +44,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->fetch();
 
             if (password_verify($password, $hashed_password)) {
-                $_SESSION['user_id'] = $client_id;
+                $_SESSION['client_id'] = $client_id; // ✅ Now storing correct client ID
                 $_SESSION['role'] = 'Client';
 
-                echo json_encode(['success' => true, 'role' => 'Client']);
+                echo json_encode([
+                    'success' => true,
+                    'role' => 'Client',
+                    'session' => $_SESSION
+                ]);
                 exit;
             }
         }

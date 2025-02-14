@@ -20,7 +20,7 @@
     <link rel="shortcut icon" href="assets/image/logo.jpg" type="image/x-icon">
      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
-    <title>Admin</title>
+    <title>Client</title>
 </head>
 <body>
     
