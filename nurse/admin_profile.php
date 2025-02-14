@@ -1,9 +1,9 @@
 <?php
 include('../api/config/dbconn.php');
-include('../admin/assets/inc/header.php');
-include('../admin/assets/inc/sidebar.php');
-include('../admin/assets/inc/navbar.php');
-include('../admin/assets/inc/footer.php');
+include('../nurse/assets/inc/header.php');
+include('../nurse/assets/inc/sidebar.php');
+include('../nurse/assets/inc/navbar.php');
+include('../nurse/assets/inc/footer.php');
 ?>
 
 <body>
