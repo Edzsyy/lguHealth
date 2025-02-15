@@ -1,4 +1,5 @@
 <?php
+include('../api/config/session_start.php');
 include('../api/config/dbconn.php');
 include('../doctor/assets/inc/header.php');
 include('../doctor/assets/inc/sidebar.php');

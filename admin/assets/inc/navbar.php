@@ -54,7 +54,7 @@
     document.getElementById('logoutButton').addEventListener('click', function(event) {
     event.preventDefault(); // Prevent default link behavior
     if (confirm("Are you sure you want to logout?")) {
-        window.location.href = "../login.html"; // Redirect to logout
+        window.location.href = "../api/logout.php"; // Redirect to logout
     }
 });
 
