@@ -1,27 +1,33 @@
 <?php
-session_start();
+include('../../config/session_start.php');
 header('Content-Type: application/json');
 include('../../config/dbconn.php');
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $data = json_decode(file_get_contents("php://input"), true);
-        if(isset($data['patientId']) && !empty($data['patientId'])){
-            $patientId = intval($data['patientId']);
-         // Prepare and execute the query
-          $stmt = $conn->prepare("DELETE FROM patients WHERE patient_id = ?");
-         $stmt->bind_param("i", $patientId);
+if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
+    // Retrieve the patientId from the GET request
+    $patientId = $_GET['patientId'];
 
-            if ($stmt->execute()) {
-                 echo json_encode(['success' => true]);
-                 exit;
-            } else {
-               echo json_encode(['success' => false, 'message' => 'Error deleting patient: ' . $stmt->error]);
-             }
+    // Prepare the DELETE SQL query using $conn (MySQLi)
+    $query = "DELETE FROM patients WHERE patient_id = ?";
+    
+    // Prepare the statement
+    if ($stmt = $conn->prepare($query)) {
+        // Bind the patientId parameter to the prepared statement
+        $stmt->bind_param('i', $patientId); // 'i' is the type for integer
+
+        // Execute the query
+        if ($stmt->execute()) {
+            echo json_encode(['success' => true]);
         } else {
-             echo json_encode(['success' => false, 'message' => 'Missing patientId']);
-         }
-   } else {
-      echo json_encode(['success' => false, 'message' => 'Invalid request method']);
+            echo json_encode(['success' => false, 'message' => 'Error deleting patient']);
+        }
+
+        // Close the prepared statement
+        $stmt->close();
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Failed to prepare SQL query']);
     }
-  $conn->close();
+} else {
+    echo json_encode(['success' => false, 'message' => 'Invalid request method']);
+}
 ?>

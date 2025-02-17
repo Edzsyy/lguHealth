@@ -1,8 +1,7 @@
 <?php
-session_start();
+include('../../config/session_start.php');
 header('Content-Type: application/json');
-
-include('../config/dbconn.php');
+include('../../config/dbconn.php');
 
 // Get raw JSON input
 $json = file_get_contents("php://input");
@@ -56,9 +55,12 @@ if ($row['count'] > 0) {
 }
 $stmtCheck->close();
 
+ // Use client ID from session
+ $clientId = $_SESSION['client_id'];
+
 // Prepare and execute the insert query
-$stmt = $conn->prepare("INSERT INTO appointments (patient_name, doctor_id, appointment_date, appointment_time, status, notes) VALUES (?, ?, ?, ?, ?, ?)");
-$stmt->bind_param("sissss", $appointmentPatient, $appointmentDoctor, $appointmentDate, $startTime, $appointmentStatus, $appointmentNotes);
+$stmt = $conn->prepare("INSERT INTO appointments (patient_name, doctor_id, appointment_date, appointment_time, status, notes, client_id) VALUES (?, ?, ?, ?, ?, ?, ?)");
+$stmt->bind_param("sissssi", $appointmentPatient, $appointmentDoctor, $appointmentDate, $startTime, $appointmentStatus, $appointmentNotes, $clientId);
 
 if ($stmt->execute()) {
     echo json_encode(['success' => true, 'message' => 'Appointment added successfully']);

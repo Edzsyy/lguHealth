@@ -1,7 +1,7 @@
 <?php
-include('../config/dbconn.php');
-
+include('../config/session_start.php');
 header('Content-Type: application/json');
+include('../config/dbconn.php');
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $name = $_POST['userName'];

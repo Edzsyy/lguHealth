@@ -1,7 +1,7 @@
 <?php
-require_once '../config/dbconn.php'; // Include your database connection
-
+include('../../config/session_start.php');
 header('Content-Type: application/json');
+include('../../config/dbconn.php');
 
 // Check if date is provided
 if (!isset($_GET['date']) || empty($_GET['date'])) {

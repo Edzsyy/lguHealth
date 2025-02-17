@@ -1,6 +1,7 @@
 <?php
 header("Content-Type: application/json");
 include('../api/config/dbconn.php');
+include('log_functions.php');  // Include the log function file
 
 $data = json_decode(file_get_contents("php://input"));
 
@@ -38,6 +39,10 @@ $insertQuery = $conn->prepare("INSERT INTO clients (full_name, email, password, 
 $insertQuery->bind_param("ssss", $fullname, $email, $hashedPassword, $role);
 
 if ($insertQuery->execute()) {
+    // Log the registration action
+    $logMessage = "New user registered: Full Name - {$fullname}, Email - {$email}, Role - {$role}";
+    logAction($logMessage);  // Call the log function
+
     echo json_encode(["success" => true, "message" => "Registration successful"]);
 } else {
     echo json_encode(["success" => false, "message" => "Error during registration"]);

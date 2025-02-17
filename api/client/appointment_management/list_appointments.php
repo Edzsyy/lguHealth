@@ -1,19 +1,15 @@
 <?php
-session_start();
+include('../../config/session_start.php');
 header('Content-Type: application/json');
+include('../../config/dbconn.php');
 
-include('../config/dbconn.php');
-
-// Check if the user is logged in
-if (!isset($_SESSION['user_id'])) {
-    echo json_encode(['success' => false, 'message' => 'User not logged in']);
-    exit;
-}
+// Get logged-in client_id from session
+$client_id = $_SESSION['client_id'];
 
 // Start building the SQL query
-$where_clause = "1=1"; // Default condition
-$params = [];
-$types = '';
+$where_clause = "appointments.client_id = ?"; // Filter by logged-in client
+$params = [$client_id];
+$types = 'i';
 
 // Filters (if provided)
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
@@ -59,7 +55,7 @@ $sql = "SELECT
     appointments.notes 
 FROM appointments 
 JOIN users ON appointments.doctor_id = users.user_id 
-WHERE users.role = 'doctor' AND $where_clause";  // ✅ Apply filters here
+WHERE users.role = 'doctor' AND $where_clause";  // Apply filters here
 
 // Prepare and execute query
 $stmt = $conn->prepare($sql);

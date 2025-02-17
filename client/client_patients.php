@@ -101,17 +101,68 @@ include('../client/assets/inc/navbar.php');
                       <p><strong>Allergies:</strong> <span id="modalPatientAllergies"></span></p>
                     </div>
                     <div class="tab-pane fade" id="diagnostic" role="tabpanel" aria-labelledby="diagnostic-tab">
-                        <p><strong>Published By:</strong> <span id="modalPublishedBy">No diagnostic conducted yet.</span></p>
-                        <p><strong>Symptoms:</strong> <span id="modalPatientSymptoms">No diagnostic conducted yet.</span></p>
-                        <p><strong>Explanation:</strong> <span id="modalPatientExplanation">No diagnostic explanation available.</span></p>
-                        <strong>Diagnosis:</strong>
-                        <div class="form-control" style="height: 300px; overflow-y: auto;"><p><span id="modalPatientDiagnosis">No diagnostic results available.</span></p></div>
+                      <p><strong>Published By:</strong> <span id="modalPublishedBy">No diagnostic conducted yet.</span></p>
+                      <p><strong>Symptoms:</strong> <span id="modalPatientSymptoms">No diagnostic conducted yet.</span></p>
+                      <p><strong>Explanation:</strong> <span id="modalPatientExplanation">No diagnostic explanation available.</span></p>
+                      <strong>Diagnosis:</strong>
+                      <div class="form-control" style="height: 300px; overflow-y: auto;">
+                        <p><span id="modalPatientDiagnosis">No diagnostic results available.</span></p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
 
+            <!-- Edit Patient Modal -->
+            <div class="modal fade" id="editPatientModal" tabindex="-1" aria-labelledby="editPatientModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="editPatientModalLabel">Edit Patient Info</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <form id="editPatientForm" method="post" action="">
+                      <input type="hidden" id="editPatientId" name="patientId">
+                      <div class="mb-3">
+                        <label for="editPatientName" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="editPatientName" name="patientName" required>
+                      </div>
+                      <div class="mb-3">
+                        <label for="editPatientDob" class="form-label">Date of Birth</label>
+                        <input type="date" class="form-control" id="editPatientDob" name="patientDob" required>
+                      </div>
+                      <div class="mb-3">
+                        <label for="editPatientGender" class="form-label">Gender</label>
+                        <select class="form-select" id="editPatientGender" name="patientGender" required>
+                          <option value="Male">Male</option>
+                          <option value="Female">Female</option>
+                          <option value="Other">Other</option>
+                        </select>
+                      </div>
+                      <div class="mb-3">
+                        <label for="editPatientContact" class="form-label">Contact Number</label>
+                        <input type="text" class="form-control" id="editPatientContact" name="patientContact" required>
+                      </div>
+                      <div class="mb-3">
+                        <label for="editPatientAddress" class="form-label">Address</label>
+                        <input type="text" class="form-control" id="editPatientAddress" name="patientAddress" required>
+                      </div>
+                      <div class="mb-3">
+                        <label for="editPatientMedicalHistory" class="form-label">Medical History</label>
+                        <textarea class="form-control" id="editPatientMedicalHistory" name="patientMedicalHistory"></textarea>
+                      </div>
+                      <div class="mb-3">
+                        <label for="editPatientAllergies" class="form-label">Allergies</label>
+                        <textarea class="form-control" id="editPatientAllergies" name="patientAllergies"></textarea>
+                      </div>
+                      <button type="submit" class="btn btn-success">Save Changes</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
 
 </main>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
@@ -185,6 +236,7 @@ include('../client/assets/inc/navbar.php');
                                 <p class="card-text">Age: ${patient.age}</p>
                                 <p class="card-text">Gender: ${patient.gender}</p>
                                 <button class="btn btn-primary view-patient" data-id="${patient.patient_id}" data-bs-toggle="modal" data-bs-target="#patientModal">View</button>
+                                <button class="btn btn-danger delete-patient" data-id="${patient.patient_id}">Delete</button>
                             </div>
                         </div>
                     </div>`;
@@ -195,7 +247,7 @@ include('../client/assets/inc/navbar.php');
         }
       })
       .catch(error => console.error('Error fetching patients:', error));
-
+    //view patient modal
     document.addEventListener('click', function(e) {
       if (e.target.classList.contains('view-patient')) {
         const patientId = e.target.getAttribute('data-id');
@@ -215,12 +267,58 @@ include('../client/assets/inc/navbar.php');
               document.getElementById('modalPatientDiagnosis').textContent = patient.data.sickness_description || 'No diagnostic results available.';
               document.getElementById('modalPublishedBy').textContent = patient.data.published_by_name || 'No diagnostic results available.';
 
-            
+
 
             }
           });
+      } else if (e.target.classList.contains('delete-patient')) {
+        const patientId = e.target.getAttribute('data-id');
+        if (confirm('Are you sure you want to delete this patient?')) {
+          fetch(`../api/client/patient_management/delete_patient.php?patientId=${patientId}`, {
+              method: 'DELETE',
+            })
+            .then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                alert('Patient deleted successfully!');
+                location.reload(); // Reload to update the patient list
+              } else {
+                alert('Failed to delete patient: ' + data.message);
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              alert('Failed to delete patient!');
+            });
+        }
       }
     });
+
+
+
+    document.getElementById('editPatientForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const formData = new FormData(this);
+      fetch('../api/client/patient_management/edit_patient.php', {
+          method: 'POST',
+          body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            alert('Patient info updated successfully!');
+            bootstrap.Modal.getInstance(document.getElementById('editPatientModal')).hide();
+            location.reload();
+          } else {
+            alert('Failed to update patient info: ' + data.message);
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('Failed to update patient info!');
+        });
+    });
+
   });
 </script>
 </body>

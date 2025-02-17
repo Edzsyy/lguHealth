@@ -1,0 +1,15 @@
+ADMIN
+username: admin@gmail.com
+pass: administrator123
+
+Doctor
+username: abdul@gmail.com
+pass: abdul123
+
+NURSE
+username: andrie@gmail.com
+pass: andrie123
+
+CLIENT
+username: paloma@gmail.com
+pass: paloma123

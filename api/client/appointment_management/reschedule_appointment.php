@@ -1,8 +1,7 @@
 <?php
-session_start();
+include('../../config/session_start.php');
 header('Content-Type: application/json');
-
-include('../config/dbconn.php');
+include('../../config/dbconn.php');
 
 // Get raw JSON input
 $json = file_get_contents("php://input");

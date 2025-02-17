@@ -1,8 +1,7 @@
 <?php
-session_start();
+include('../config/session_start.php');
+header('Content-Type: application/json');
 include('../config/dbconn.php');
-
-header("Content-Type: application/json; charset=UTF-8");
 
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {

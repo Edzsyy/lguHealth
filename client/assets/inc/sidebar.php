@@ -13,9 +13,9 @@
 
         <!-- Add Business List Here -->
 
-        <li class="divider" data-text="settings">Settings</li>
+        <!-- <li class="divider" data-text="settings">Settings</li> -->
         <!-- <li><a href="admin_users.php"><i class='bx bxs-user-account icon'></i>  Users</a></li> -->
-        <li><a href="client_settings.php"><i class='bx bxs-cog icon'></i>Settings</a></li>
+        <!-- <li><a href="client_settings.php"><i class='bx bxs-cog icon'></i>Settings</a></li> -->
     </ul>
     <div class="ads">
         <div class="wrapper">

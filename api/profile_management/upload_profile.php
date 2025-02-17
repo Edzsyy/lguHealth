@@ -1,8 +1,7 @@
 <?php
+include('../config/session_start.php');
+header('Content-Type: application/json');
 include('../config/dbconn.php');
-session_start();
-
-header("Content-Type: application/json");
 
 $user_id = $_SESSION['user_id'] ?? null;
 if (!$user_id) {

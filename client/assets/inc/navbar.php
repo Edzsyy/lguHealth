@@ -13,7 +13,7 @@
             <img src="./assets/image/profile.png" alt="">
             <ul class="profile-link">
                 <li><a href="client_profile.php"><i class='bx bxs-user-circle icon'></i>Profile</a></li>
-                <li><a href="client_settings.php"><i class='bx bx-cog icon'></i>Settings</a></li>
+                <!-- <li><a href="client_settings.php"><i class='bx bx-cog icon'></i>Settings</a></li> -->
                 <li><a href="../api/logout.php"  id="logoutButton"><i class='bx bx-log-out icon'></i>Logout</a></li>
             </ul>
         </div>

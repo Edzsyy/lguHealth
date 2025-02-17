@@ -1,6 +1,7 @@
 <?php
-include '../config/dbconn.php';
-
+include('../config/session_start.php');
+header('Content-Type: application/json');
+include('../config/dbconn.php');
 // Check if item_id is provided
 if (!isset($_GET['item_id']) ) {
     echo json_encode(['success' => false, 'message' => 'Invalid item ID']);

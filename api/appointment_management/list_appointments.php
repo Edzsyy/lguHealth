@@ -11,9 +11,9 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 // Start building the SQL query
-$where_clause = "1=1"; // Default condition
-$params = [];
-$types = '';
+$where_clause = "appointments.doctor_id = ?"; // Filter to get appointments for the logged-in doctor
+$params = [$_SESSION['user_id']]; // Use logged-in user's ID for filtering
+$types = 'i'; // The user_id is an integer
 
 // Filters (if provided)
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {

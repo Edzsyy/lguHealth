@@ -1,6 +1,7 @@
 <?php
-include('../config/dbconn.php'); // Ensure dbconn.php is correctly included
-header("Content-Type: application/json");
+include('../config/session_start.php');
+header('Content-Type: application/json');
+include('../config/dbconn.php');
 
 try {
     // Verify if $conn exists
