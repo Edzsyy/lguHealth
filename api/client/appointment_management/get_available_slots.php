@@ -3,6 +3,12 @@ session_start();
 header('Content-Type: application/json');
 include('../../config/dbconn.php');
 
+// Check if user is logged in
+if (!isset($_SESSION['user_id'])) {
+    echo json_encode(['success' => false, 'message' => 'User not logged in']);
+    exit;
+}
+
 // Check if date is provided
 if (!isset($_GET['date']) || empty($_GET['date'])) {
     echo json_encode(["success" => false, "message" => "No date provided"]);
@@ -40,6 +46,7 @@ try {
         }
     }
 
+    // Close database connections
     $stmt->close();
     $conn->close();
 

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 17, 2025 at 06:55 AM
+-- Generation Time: Mar 08, 2025 at 02:05 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -30,7 +30,7 @@ SET time_zone = "+00:00";
 CREATE TABLE `appointments` (
   `appointment_id` int(11) NOT NULL,
   `patient_id` int(11) DEFAULT NULL,
-  `client_id` int(11) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
   `patient_name` varchar(255) DEFAULT NULL,
   `doctor_id` int(11) NOT NULL,
   `appointment_date` date NOT NULL,
@@ -45,7 +45,7 @@ CREATE TABLE `appointments` (
 -- Dumping data for table `appointments`
 --
 
-INSERT INTO `appointments` (`appointment_id`, `patient_id`, `client_id`, `patient_name`, `doctor_id`, `appointment_date`, `appointment_time`, `status`, `notes`, `created_at`, `updated_at`) VALUES
+INSERT INTO `appointments` (`appointment_id`, `patient_id`, `user_id`, `patient_name`, `doctor_id`, `appointment_date`, `appointment_time`, `status`, `notes`, `created_at`, `updated_at`) VALUES
 (7, NULL, NULL, 'dsadsa', 2, '2025-02-13', '08:00:00', 'Completed', 'awsdasdasdas', '2025-02-09 09:44:32', '2025-02-16 11:54:28'),
 (13, NULL, NULL, 'kargo', 2, '2025-02-09', '17:46:00', 'Completed', 'dsadsa', '2025-02-09 09:47:01', '2025-02-16 11:54:34'),
 (14, NULL, NULL, 'vfey', 2, '2025-02-09', '17:49:00', 'Completed', 'dasdsad', '2025-02-09 09:49:37', '2025-02-16 11:57:52'),
@@ -56,7 +56,13 @@ INSERT INTO `appointments` (`appointment_id`, `patient_id`, `client_id`, `patien
 (19, NULL, 2, 'tanginamo', 3, '2025-02-17', '10:00:00', 'Completed', 'tanginamo', '2025-02-16 12:23:23', '2025-02-16 12:23:50'),
 (20, NULL, 2, 'kupal', 3, '2025-02-16', '15:00:00', 'Completed', 'fsddf', '2025-02-16 13:06:16', '2025-02-16 14:43:31'),
 (21, NULL, 2, 'wtf', 3, '2025-02-19', '08:00:00', 'Completed', 'fasdfasd', '2025-02-16 14:53:12', '2025-02-16 14:55:26'),
-(22, NULL, 2, 'sadasd', 3, '2025-02-12', '09:00:00', 'Completed', 'dasd', '2025-02-16 14:59:49', '2025-02-16 15:02:06');
+(22, NULL, 2, 'sadasd', 3, '2025-02-12', '09:00:00', 'Completed', 'dasd', '2025-02-16 14:59:49', '2025-02-16 15:02:06'),
+(23, NULL, 2, 'edgeniel', 2, '2025-03-08', '14:00:00', 'Cancelled', 'may hika ako', '2025-03-08 07:26:05', '2025-03-08 07:40:45'),
+(24, NULL, 2, 'vfey', 3, '2025-03-08', '13:00:00', 'Completed', '', '2025-03-08 07:47:09', '2025-03-08 11:31:45'),
+(25, NULL, 2, 'dsfsdf', 3, '2025-03-08', '16:00:00', 'Scheduled', 'gfdgf', '2025-03-08 08:48:32', '2025-03-08 08:48:32'),
+(27, NULL, 8, 'mero', 3, '2025-03-09', '09:00:00', 'Cancelled', 'sdasd', '2025-03-08 11:18:56', '2025-03-08 11:23:00'),
+(28, NULL, 8, 'vfey', 3, '2025-03-09', '10:00:00', 'Scheduled', 'sadasd', '2025-03-08 11:22:27', '2025-03-08 11:22:27'),
+(29, NULL, 12, 'marvin', 3, '2025-03-10', '08:00:00', 'Scheduled', 'sdasd', '2025-03-08 12:02:09', '2025-03-08 12:02:09');
 
 -- --------------------------------------------------------
 
@@ -74,32 +80,6 @@ CREATE TABLE `billing` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `clients`
---
-
-CREATE TABLE `clients` (
-  `client_id` int(11) NOT NULL,
-  `patient_id` int(11) DEFAULT NULL,
-  `full_name` varchar(255) NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `role` varchar(255) DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `clients`
---
-
-INSERT INTO `clients` (`client_id`, `patient_id`, `full_name`, `email`, `password`, `role`, `created_at`, `updated_at`) VALUES
-(1, NULL, 'niel', 'niel123@gmail.com', '$2y$10$PUZAbajp7pxExlZuCDNRAOFC31WiLJcI1ilOa51S45WdFa4hXdXR2', NULL, '2025-02-08 10:10:32', '2025-02-08 10:10:32'),
-(2, NULL, 'andrie paloma', 'paloma@gmail.com', '$2y$10$fOd6kFEbDOFWkhkp3mn7VOupGhuNgZMtX5oQ.jjudZVZHqYVWdd.u', 'Client', '2025-02-14 07:22:02', '2025-02-14 07:22:02'),
-(3, NULL, 'edgeniel A. buhian', 'edgeniel16@gmail.com', '$2y$10$1KJzfxIxfpfUwtRVKktijelDoZodM8/jn8ZG3TKGLPayUt/UPYPZy', 'Client', '2025-02-16 13:39:53', '2025-02-16 13:39:53');
 
 -- --------------------------------------------------------
 
@@ -172,7 +152,10 @@ INSERT INTO `logs` (`id`, `message`, `created_at`) VALUES
 (7, 'Appointment ID 21 marked as completed by Doctor ID undefined at 2025-02-16T14:55:26.116Z', '2025-02-16 07:55:26'),
 (8, 'Appointment ID 22 marked as completed by User ID 3 at 2025-02-16T15:02:06.435Z', '2025-02-16 08:02:06'),
 (9, 'Inventory Item ID 7 updated by User ID 3 at 2025-02-16 16:14:05', '2025-02-16 08:14:05'),
-(10, 'User with ID 6 added new inventory item: key board, Category: equipment, Quantity: 25, Unit Price: 12', '2025-02-16 22:46:30');
+(10, 'User with ID 6 added new inventory item: key board, Category: equipment, Quantity: 25, Unit Price: 12', '2025-02-16 22:46:30'),
+(11, 'Appointment ID 24 marked as completed by User ID 3', '2025-03-08 04:31:45'),
+(12, 'New user registered: Full Name - art javar, Email - javar@gmail.com, Role - Client', '2025-03-08 11:47:36'),
+(13, 'New user registered: Full Name - art javar, Email - javar@gmail.com, Role - Client', '2025-03-08 11:57:03');
 
 -- --------------------------------------------------------
 
@@ -182,7 +165,7 @@ INSERT INTO `logs` (`id`, `message`, `created_at`) VALUES
 
 CREATE TABLE `patients` (
   `patient_id` int(11) NOT NULL,
-  `client_id` int(15) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
   `patient_name` varchar(255) NOT NULL,
   `date_of_birth` date DEFAULT NULL,
   `age` int(11) NOT NULL,
@@ -207,7 +190,7 @@ CREATE TABLE `patients` (
 -- Dumping data for table `patients`
 --
 
-INSERT INTO `patients` (`patient_id`, `client_id`, `patient_name`, `date_of_birth`, `age`, `gender`, `contact_number`, `address`, `medical_history`, `allergies`, `selected_symptoms`, `detailed_explanation`, `sickness_description`, `registration_type`, `created_at`, `updated_at`, `admission_type`, `patient_status`, `doctor_id`, `published_by`) VALUES
+INSERT INTO `patients` (`patient_id`, `user_id`, `patient_name`, `date_of_birth`, `age`, `gender`, `contact_number`, `address`, `medical_history`, `allergies`, `selected_symptoms`, `detailed_explanation`, `sickness_description`, `registration_type`, `created_at`, `updated_at`, `admission_type`, `patient_status`, `doctor_id`, `published_by`) VALUES
 (2, NULL, 'test', '2025-01-01', 0, 'Female', '09152130678', 'k1 brgy pansol Q.C', 'mental', 'nuts', 'headache, musclePain', '9 years old with mild headache and severe muscle pain', 'Strain/Overexertion:**  Intense physical activity can cause significant muscle pain. Over-the-counter pain relief:**  For the headache and muscle pain, age-appropriate doses of acetaminophen (Tylenol) or ibuprofen (Advil, Motrin) can be given, following the instructions on the packaging carefully. **Always check with a doctor or pharmacist before giving any medication to a child.**', 'staff', '2025-01-25 08:45:08', '2025-02-07 11:14:24', 'staff', 'active', NULL, 1),
 (3, NULL, 'edgeniel A. buhian', '2025-01-25', 0, 'Male', '09152130678', 'k1 brgy pansol Q.C', 'puyat', 'coding', 'fatigue, weakness, musclePain', '10 years old boy with weakness , fatigue, and mild muscle pain', '0', 'staff', '2025-01-25 08:53:50', '2025-02-06 09:24:45', 'staff', 'active', NULL, 1),
 (4, NULL, 'margo', '2025-01-01', 0, 'Female', '09846387631', 'nova bayan', 'diabeties', 'shrimp', NULL, NULL, NULL, 'staff', '2025-01-26 05:47:51', '2025-01-26 05:47:51', 'staff', 'active', NULL, NULL),
@@ -220,7 +203,10 @@ INSERT INTO `patients` (`patient_id`, `client_id`, `patient_name`, `date_of_birt
 (11, NULL, 'sophie arnold', '1988-02-04', 37, 'Female', '09152130345', 'k1 brgy pansol pasig', 'chest pain', 'nuts', 'soreThroat, runnyNose, sneezing', 'mild sore throat and minor runny nose with combination of sneezing and chills', 'Common Cold take rest and sleep peacefuly', 'staff', '2025-02-04 05:11:44', '2025-02-06 12:22:32', 'staff', 'active', NULL, 1),
 (17, 2, 'andrie paloma', '2012-02-14', 13, 'Male', '0915213123', 'Nova bayan quezon city', 'di ko alam', 'bawal sa seafoods', 'fever, rash, itching', '13 year old male with allergies on seafoods with those following symptoms', '**1. Likely Diagnoses:**\\n\\nGiven the patient\\\'s history of seafood allergy and presentation of fever, rash (morbilliform, urticarial, or possibly other allergic reactions), and pruritus (itching), the following diagnoses should be considered in order of likelihood:\\n\\n\\n1. **Acute Urticaria:**  A type I hypersensitivity reaction characterized by wheals and flares.  The fever suggests a more systemic reaction.\\n\\n**Serum Sickness-like Reaction:**  A delayed-type hypersensitivity reaction to seafood proteins, potentially mimicking serum sickness with fever, rash, and arthralgia (though not explicitly mentioned).\\n3. **Infectious Exacerbation:** A superimposed viral or bacterial infection could exacerbate the allergic response, contributing to the fever.  Further investigation may be necessary to rule out this possibility.\\n4. **Anaphylaxis (less likely but needs to be excluded):** Though the symptoms aren\\\'t classically severe for anaphylaxis,  the presence of fever and systemic symptoms warrants careful consideration and exclusion.  A detailed history regarding respiratory compromise or hypotension is crucial.\\n\\n\\n**2. Recommendations:**\\n\\n1. **Assess for anaphylaxis:**  Immediately assess vital signs (blood pressure, heart rate, respiratory rate, oxygen saturation) to rule out anaphylaxis.  If any signs of respiratory distress or hypotension are present, initiate appropriate emergency management (e.g., epinephrine administration, airway management).\\n\\n2. **Complete Allergic Workup:**  Assess the specific seafood implicated. If there are multiple possible exposures, it is crucial to identify the responsible allergen. Skin prick testing or serum-specific IgE testing should be considered for precise identification of the causative allergen.  Consider cross-reactivity testing given the potential for multiple allergens in seafood.\\n\\n3. **Supportive Care:**  Administer antipyretics (e.g., acetaminophen or ibuprofen) for fever management.  For pruritus, consider oral antihistamines (e.g., cetirizine, fexofenadine) or topical corticosteroids (hydrocortisone cream) if the rash is localized.   Cool compresses may also help.\\n\\n4. **Antihistamine Management:**  Initiate high-dose oral antihistamines (e.g., diphenhydramine or hydroxyzine) to manage the acute allergic reaction.  Consider the addition of a corticosteroid (e.g., prednisone) if symptoms are severe or unresponsive to antihistamines.  Adjust dosage based on the patient’s clinical response.\\n\\n5. **Infectious Workup:**  If clinical suspicion for a co-existing infection persists (e.g., elevated white blood cell count), obtain relevant laboratory investigations (complete blood count with differential, blood cultures if indicated).\\n\\n6. **Close Monitoring:**  The patient requires close observation for at least 24 hours to assess for any deterioration in clinical status.  Advise the family about potential worsening symptoms and the importance of prompt return if they occur.\\n\\n7. **Patient/Family Education:**  Provide detailed education on the avoidance of the identified allergen(s) and the importance of carrying an epinephrine auto-injector (if appropriate based on the allergic reaction).\\n\\n8. **Referral:**  Consider referral to an allergist/immunologist for long-term management and allergy desensitization if necessary.', 'staff', '2025-02-14 11:46:40', '2025-02-14 11:49:11', 'self-registered', 'active', NULL, 3),
 (20, NULL, 'edgeniel A. buhian', '2025-01-29', 0, 'Male', '09152130678', 'k1 brgy pansol Q.C', 'asdas', 'sdasd', NULL, NULL, NULL, 'staff', '2025-02-16 13:49:46', '2025-02-16 13:49:46', 'staff', 'active', NULL, NULL),
-(24, NULL, 'edgeniel A. buhian', '2025-02-06', 0, 'Male', '09152130678', 'k1 brgy pansol Q.C', 'asdas', 'asdas', NULL, NULL, NULL, 'staff', '2025-02-16 13:57:21', '2025-02-16 13:57:21', 'staff', 'active', NULL, NULL);
+(24, NULL, 'edgeniel A. buhian', '2025-02-06', 0, 'Male', '09152130678', 'k1 brgy pansol Q.C', 'asdas', 'asdas', NULL, NULL, NULL, 'staff', '2025-02-16 13:57:21', '2025-02-16 13:57:21', 'staff', 'active', NULL, NULL),
+(25, 2, 'edgeniel A. buhian', '2025-03-07', 0, 'Male', '09152130678', 'k1 brgy pansol Q.C', 'dsfds', 'fsdfsd', NULL, NULL, NULL, 'staff', '2025-03-08 08:48:06', '2025-03-08 08:48:06', 'self-registered', 'active', NULL, NULL),
+(26, 8, 'edgeniel A. buhian', '2008-03-08', 17, 'Male', '09152130678', 'k1 brgy pansol Q.C', 'dfasdf', 'asdfsd', NULL, NULL, NULL, 'staff', '2025-03-08 11:26:55', '2025-03-08 11:26:55', 'self-registered', 'active', NULL, NULL),
+(27, 12, 'arthur morgan', '2014-03-08', 11, 'Male', '09152130678', 'k1 brgy pansol Q.C', 'adsas', 'dasd', NULL, NULL, NULL, 'staff', '2025-03-08 12:01:35', '2025-03-08 12:01:35', 'self-registered', 'active', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -230,10 +216,11 @@ INSERT INTO `patients` (`patient_id`, `client_id`, `patient_name`, `date_of_birt
 
 CREATE TABLE `users` (
   `user_id` int(11) NOT NULL,
+  `patient_id` int(11) DEFAULT NULL,
   `user_name` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `role` enum('Admin','Doctor','Nurse','Receptionist') NOT NULL,
+  `role` enum('Admin','Doctor','Nurse','Receptionist','Client') NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -242,11 +229,15 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`user_id`, `user_name`, `email`, `password`, `role`, `created_at`, `updated_at`) VALUES
-(1, 'admin', 'admin@gmail.com', '$2y$10$tqIBdQ9mdRYG/9EJQOIOwe9ngIvkESx.fSY8sTKybjrGbmHvDAVlW', 'Admin', '2025-01-25 06:48:01', '2025-02-12 12:18:02'),
-(2, 'Art javar', 'art@gmail.com', '$2y$10$FfLiMmPM7YBsFmYcvSwcherc3XDpEx2UMHoyGvpWpZo.uNIPKHAZC', 'Doctor', '2025-01-26 11:55:37', '2025-02-11 12:26:00'),
-(3, 'Abdul Wahid', 'abdul@gmail.com', '$2y$10$CuZd0JNFFafa/yaivuNQ5uUU4rdXuY61aIhxbFewoF2RNquLL31BW', 'Doctor', '2025-02-11 07:05:25', '2025-02-11 07:05:25'),
-(6, 'Andrie Embilino', 'andrie@gmail.com', '$2y$10$1mLM.GY5FzT3elMjwToFXuB/3aJAnGtoaFLK9F12IXNJYNwvO3CQW', 'Nurse', '2025-02-16 12:35:15', '2025-02-16 12:35:15');
+INSERT INTO `users` (`user_id`, `patient_id`, `user_name`, `email`, `password`, `role`, `created_at`, `updated_at`) VALUES
+(1, NULL, 'admin', 'admin@gmail.com', '$2y$10$tqIBdQ9mdRYG/9EJQOIOwe9ngIvkESx.fSY8sTKybjrGbmHvDAVlW', 'Admin', '2025-01-25 06:48:01', '2025-02-12 12:18:02'),
+(2, NULL, 'Art javar', 'art@gmail.com', '$2y$10$FfLiMmPM7YBsFmYcvSwcherc3XDpEx2UMHoyGvpWpZo.uNIPKHAZC', 'Doctor', '2025-01-26 11:55:37', '2025-02-11 12:26:00'),
+(3, NULL, 'Abdul Wahid', 'abdul@gmail.com', '$2y$10$CuZd0JNFFafa/yaivuNQ5uUU4rdXuY61aIhxbFewoF2RNquLL31BW', 'Doctor', '2025-02-11 07:05:25', '2025-02-11 07:05:25'),
+(6, NULL, 'Andrie Embilino', 'andrie@gmail.com', '$2y$10$1mLM.GY5FzT3elMjwToFXuB/3aJAnGtoaFLK9F12IXNJYNwvO3CQW', 'Nurse', '2025-02-16 12:35:15', '2025-02-16 12:35:15'),
+(7, NULL, 'niel', 'niel123@gmail.com', '$2y$10$PUZAbajp7pxExlZuCDNRAOFC31WiLJcI1ilOa51S45WdFa4hXdXR2', 'Client', '2025-02-08 10:10:32', '2025-02-08 10:10:32'),
+(8, NULL, 'andrie paloma', 'paloma@gmail.com', '$2y$10$fOd6kFEbDOFWkhkp3mn7VOupGhuNgZMtX5oQ.jjudZVZHqYVWdd.u', 'Client', '2025-02-14 07:22:02', '2025-02-14 07:22:02'),
+(9, NULL, 'edgeniel A. buhian', 'edgeniel16@gmail.com', '$2y$10$1KJzfxIxfpfUwtRVKktijelDoZodM8/jn8ZG3TKGLPayUt/UPYPZy', 'Client', '2025-02-16 13:39:53', '2025-02-16 13:39:53'),
+(12, NULL, 'art javar', 'javar@gmail.com', '$2y$10$C3wtzNRTwmJh.ywMxPEg8uzT0FVLA5ybFnKc/jAEsz6AqmitTOWGS', 'Client', '2025-03-08 11:57:03', '2025-03-08 11:57:03');
 
 --
 -- Indexes for dumped tables
@@ -258,8 +249,8 @@ INSERT INTO `users` (`user_id`, `user_name`, `email`, `password`, `role`, `creat
 ALTER TABLE `appointments`
   ADD PRIMARY KEY (`appointment_id`),
   ADD KEY `patient_id` (`patient_id`),
-  ADD KEY `client_id` (`client_id`),
-  ADD KEY `doctor_id` (`doctor_id`);
+  ADD KEY `doctor_id` (`doctor_id`),
+  ADD KEY `appointments_ibfk_2` (`user_id`);
 
 --
 -- Indexes for table `billing`
@@ -267,14 +258,6 @@ ALTER TABLE `appointments`
 ALTER TABLE `billing`
   ADD PRIMARY KEY (`billing_id`),
   ADD KEY `appointment_id` (`appointment_id`),
-  ADD KEY `patient_id` (`patient_id`);
-
---
--- Indexes for table `clients`
---
-ALTER TABLE `clients`
-  ADD PRIMARY KEY (`client_id`),
-  ADD UNIQUE KEY `email` (`email`),
   ADD KEY `patient_id` (`patient_id`);
 
 --
@@ -322,19 +305,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `appointments`
 --
 ALTER TABLE `appointments`
-  MODIFY `appointment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `appointment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT for table `billing`
 --
 ALTER TABLE `billing`
   MODIFY `billing_id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `clients`
---
-ALTER TABLE `clients`
-  MODIFY `client_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `doctor_assignments`
@@ -352,19 +329,19 @@ ALTER TABLE `inventory`
 -- AUTO_INCREMENT for table `logs`
 --
 ALTER TABLE `logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `patients`
 --
 ALTER TABLE `patients`
-  MODIFY `patient_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `patient_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- Constraints for dumped tables
@@ -375,7 +352,7 @@ ALTER TABLE `users`
 --
 ALTER TABLE `appointments`
   ADD CONSTRAINT `appointments_ibfk_1` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`patient_id`),
-  ADD CONSTRAINT `appointments_ibfk_2` FOREIGN KEY (`client_id`) REFERENCES `clients` (`client_id`),
+  ADD CONSTRAINT `appointments_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
   ADD CONSTRAINT `appointments_ibfk_3` FOREIGN KEY (`doctor_id`) REFERENCES `users` (`user_id`);
 
 --
@@ -384,12 +361,6 @@ ALTER TABLE `appointments`
 ALTER TABLE `billing`
   ADD CONSTRAINT `billing_ibfk_1` FOREIGN KEY (`appointment_id`) REFERENCES `appointments` (`appointment_id`),
   ADD CONSTRAINT `billing_ibfk_2` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`patient_id`);
-
---
--- Constraints for table `clients`
---
-ALTER TABLE `clients`
-  ADD CONSTRAINT `clients_ibfk_1` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`patient_id`);
 
 --
 -- Constraints for table `doctor_assignments`

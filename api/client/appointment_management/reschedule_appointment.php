@@ -7,6 +7,7 @@ include('../../config/dbconn.php');
 $json = file_get_contents("php://input");
 $data = json_decode($json, true);
 
+// Validate input data
 if (!$data || !isset($data['appointmentId'])) {
     echo json_encode(['success' => false, 'message' => 'Invalid request']);
     exit;

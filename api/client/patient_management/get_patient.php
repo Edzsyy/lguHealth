@@ -12,7 +12,7 @@ try {
 
     if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['patientId'])) {
         $patientId = filter_var($_GET['patientId'], FILTER_VALIDATE_INT);
-        $clientId = $_SESSION['client_id'] ?? null;
+        $clientId = $_SESSION['user_id'] ?? null;
 
         if ($patientId === false || $patientId <= 0 || !$clientId) {
             error_log("Invalid patient ID or missing client session");
@@ -20,7 +20,7 @@ try {
             exit;
         }
 
-        $stmt = $conn->prepare("SELECT * FROM patients WHERE patient_id = ? AND client_id = ?");
+        $stmt = $conn->prepare("SELECT * FROM patients WHERE patient_id = ? AND user_id = ?");
         $stmt->bind_param("ii", $patientId, $clientId);
         $stmt->execute();
         $result = $stmt->get_result();

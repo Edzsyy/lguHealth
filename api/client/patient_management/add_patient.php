@@ -5,7 +5,7 @@ include('../../config/dbconn.php');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Ensure a client is logged in
-    if (!isset($_SESSION['client_id']) || empty($_SESSION['client_id'])) {
+    if (!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])) {
         echo json_encode(['success' => false, 'message' => 'Client not logged in']);
         exit;
     }
@@ -28,10 +28,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $patientAllergies = isset($data['patientAllergies']) ? trim($data['patientAllergies']) : '';
         
         // Use client ID from session
-        $clientId = $_SESSION['client_id'];
+        $clientId = $_SESSION['user_id'];
 
         // Prepare and execute the query
-        $stmt = $conn->prepare("INSERT INTO patients (patient_name, date_of_birth, age, gender, contact_number, address, medical_history, allergies, admission_type, client_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'self-registered', ?)");
+        $stmt = $conn->prepare("INSERT INTO patients (patient_name, date_of_birth, age, gender, contact_number, address, medical_history, allergies, admission_type, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'self-registered', ?)");
         $stmt->bind_param("ssisssssi", $patientName, $patientDob, $patientAge, $patientGender, $patientContact, $patientAddress, $patientMedicalHistory, $patientAllergies, $clientId);
 
 

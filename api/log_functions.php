@@ -1,7 +1,7 @@
 <?php 
 session_start();
 header('Content-Type: application/json');
-include('../config/dbconn.php');
+include('./config/dbconn.php');
 
 // Function to log an action
 function logAction($message) {

@@ -21,6 +21,7 @@ $appointmentTime = isset($data['appointmentTime']) ? $data['appointmentTime'] : 
 $appointmentStatus = "Scheduled"; // Default status
 $appointmentNotes = isset($data['appointmentNotes']) ? trim($data['appointmentNotes']) : '';
 
+// Check if all required data exists
 if (!$appointmentPatient || !$appointmentDoctor || !$appointmentDate || !$appointmentTime) {
     echo json_encode(['success' => false, 'message' => 'Missing required data', 'received_data' => $data]);
     exit;
@@ -55,12 +56,18 @@ if ($row['count'] > 0) {
 }
 $stmtCheck->close();
 
- // Use client ID from session
- $clientId = $_SESSION['client_id'];
+// Ensure the logged-in user is a client
+if ($_SESSION['role'] !== 'Client') {
+    echo json_encode(['success' => false, 'message' => 'Unauthorized access. You must be a client to book an appointment.']);
+    exit;
+}
+
+// Use user ID (from the users table) for the client
+$userId = $_SESSION['user_id']; // Now using user_id instead of client_id
 
 // Prepare and execute the insert query
-$stmt = $conn->prepare("INSERT INTO appointments (patient_name, doctor_id, appointment_date, appointment_time, status, notes, client_id) VALUES (?, ?, ?, ?, ?, ?, ?)");
-$stmt->bind_param("sissssi", $appointmentPatient, $appointmentDoctor, $appointmentDate, $startTime, $appointmentStatus, $appointmentNotes, $clientId);
+$stmt = $conn->prepare("INSERT INTO appointments (patient_name, doctor_id, appointment_date, appointment_time, status, notes, user_id) VALUES (?, ?, ?, ?, ?, ?, ?)");
+$stmt->bind_param("sissssi", $appointmentPatient, $appointmentDoctor, $appointmentDate, $startTime, $appointmentStatus, $appointmentNotes, $userId);
 
 if ($stmt->execute()) {
     echo json_encode(['success' => true, 'message' => 'Appointment added successfully']);

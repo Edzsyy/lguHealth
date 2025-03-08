@@ -3,18 +3,18 @@ session_start();
 header('Content-Type: application/json');
 include('../../config/dbconn.php');
 
-// Get the logged-in client_id from session
-$client_id = $_SESSION['client_id'];
-if(!isset($_SESSION['client_id'])) {
-    die(json_encode(["success" => false, "message" => "No client_id found in session"]));
+// Get the logged-in user_id from session
+$user_id = $_SESSION['user_id'];
+if(!isset($_SESSION['user_id'])) {
+    die(json_encode(["success" => false, "message" => "No user_idfound in session"]));
 } else {
-    error_log("Client ID from session: " . $_SESSION['client_id']);
+    error_log("Client ID from session: " . $_SESSION['user_id']);
 }
 
 
-$sql = "SELECT * FROM patients WHERE client_id = ?";
+$sql = "SELECT * FROM patients WHERE user_id = ?";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $client_id);
+$stmt->bind_param("i", $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
 

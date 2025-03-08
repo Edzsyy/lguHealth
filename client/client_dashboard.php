@@ -6,10 +6,10 @@ include('../client/assets/inc/sidebar.php');
 include('../client/assets/inc/navbar.php');
 
 // Assuming the user is logged in and we have their ID in the session
-$user_id = $_SESSION['client_id']; // Modify to fit your session variable for user ID
+$user_id = $_SESSION['user_id']; // Modify to fit your session variable for user ID
 
 // Fetch all appointments for the patient
-$appointment_query = "SELECT * FROM appointments WHERE client_id = ? ORDER BY appointment_date ASC";
+$appointment_query = "SELECT * FROM appointments WHERE user_id = ? ORDER BY appointment_date ASC";
 $stmt = $conn->prepare($appointment_query);
 $stmt->bind_param("i", $user_id);
 $stmt->execute();

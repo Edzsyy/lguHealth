@@ -1,6 +1,4 @@
 <?php
-session_start();
-include('../api/config/dbconn.php');
 include('../nurse/assets/inc/header.php');
 include('../nurse/assets/inc/sidebar.php');
 include('../nurse/assets/inc/navbar.php');

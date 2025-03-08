@@ -3,12 +3,12 @@ session_start();
 header('Content-Type: application/json');
 include('../../config/dbconn.php');
 
-// Get logged-in client_id from session
-$client_id = $_SESSION['client_id'];
+// Get logged-in user_id from session
+$user_id = $_SESSION['user_id'];
 
 // Start building the SQL query
-$where_clause = "appointments.client_id = ?"; // Filter by logged-in client
-$params = [$client_id];
+$where_clause = "appointments.user_id = ?"; // Filter by logged-in client
+$params = [$user_id];
 $types = 'i';
 
 // Filters (if provided)
