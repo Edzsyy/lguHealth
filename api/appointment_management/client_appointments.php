@@ -1,21 +1,25 @@
 <?php
 session_start();
 header('Content-Type: application/json');
-include('../../config/dbconn.php');
 
-// Get logged-in client_id from session
-$client_id = $_SESSION['client_id'];
+include('../config/dbconn.php');
 
-// Start building the SQL query
-$where_clause = "appointments.client_id = ?"; // Filter by logged-in client
-$params = [$client_id];
-$types = 'i';
+// Check if the user is logged in as a patient (client_id should be set)
+if (!isset($_SESSION['client_id'])) {
+    echo json_encode(['success' => false, 'message' => 'User not logged in']);
+    exit;
+}
+
+// Start building the SQL query to get appointments for the logged-in patient (client_id)
+$where_clause = "appointments.client_id = ?"; // Filter to get appointments for the logged-in patient
+$params = [$_SESSION['client_id']]; // Use logged-in patient's ID for filtering
+$types = 'i'; // The client_id is an integer
 
 // Filters (if provided)
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    if (!empty($_GET['filterPatient'])) {
-        $where_clause .= " AND appointments.patient_name LIKE ?";
-        $params[] = "%" . $_GET['filterPatient'] . "%";
+    if (!empty($_GET['filterDoctor'])) {
+        $where_clause .= " AND users.user_name LIKE ?";
+        $params[] = "%" . $_GET['filterDoctor'] . "%";
         $types .= 's';
     }
 
@@ -28,12 +32,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     if (!empty($_GET['filterEndDate'])) {
         $where_clause .= " AND appointments.appointment_date <= ?";
         $params[] = $_GET['filterEndDate'];
-        $types .= 's';
-    }
-
-    if (!empty($_GET['filterDoctor'])) {
-        $where_clause .= " AND users.user_name LIKE ?";
-        $params[] = "%" . $_GET['filterDoctor'] . "%";
         $types .= 's';
     }
 
@@ -55,7 +53,7 @@ $sql = "SELECT
     appointments.notes 
 FROM appointments 
 JOIN users ON appointments.doctor_id = users.user_id 
-WHERE users.role = 'doctor' AND $where_clause";  // Apply filters here
+WHERE appointments.client_id = ? AND $where_clause";  // Apply client_id filter
 
 // Prepare and execute query
 $stmt = $conn->prepare($sql);

@@ -1,5 +1,5 @@
 <?php
-include('../api/config/session_start.php');
+session_start();
 include('../api/config/dbconn.php');
 include('../doctor/assets/inc/header.php');
 include('../doctor/assets/inc/sidebar.php');
@@ -306,7 +306,7 @@ include('../doctor/assets/inc/navbar.php');
             `;
 
                     // If the status is 'completed', modify the button appearance and disable it
-                    if (appointment.status === "Completed") {
+                    if ((appointment.status === "Completed") || (appointment.status === "Cancelled")) {
                         completeButtonHtml = `
                     <button class="btn btn-secondary btn-sm complete-btn" 
                             disabled 

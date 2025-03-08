@@ -4,10 +4,10 @@ header('Content-Type: application/json');
 
 include('../config/dbconn.php');
 
-    // if (!isset($_SESSION['user_id'])) {
-    //     echo json_encode(['success' => false, 'message' => 'User not logged in']);
-    //     exit;
-    // }
+     if (!isset($_SESSION['user_id'])) {
+         echo json_encode(['success' => false, 'message' => 'User not logged in']);
+         exit;
+     }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = json_decode(file_get_contents("php://input"), true);

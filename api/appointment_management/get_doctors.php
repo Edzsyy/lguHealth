@@ -4,10 +4,10 @@ header('Content-Type: application/json');
 
 include('../config/dbconn.php');
 
-// if (!isset($_SESSION['user_id'])) {
-//     echo json_encode(['success' => false, 'message' => 'User not logged in']);
-//     exit;
-// }
+ if (!isset($_SESSION['user_id'])) {
+     echo json_encode(['success' => false, 'message' => 'User not logged in']);
+     exit;
+ }
 
 try {
     // Prepare and execute the query

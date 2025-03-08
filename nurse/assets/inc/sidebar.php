@@ -1,6 +1,6 @@
 <!--sidebar-->
 <section id="sidebar">
-    <a href="admin_dashboard.php" class="logo"><img src="./assets/image/logo.jpg" alt=""> <span>CLIENT</span></a>
+    <a href="admin_dashboard.php" class="logo"><img src="./assets/image/logo.jpg" alt="" href="admin_dashboard.php"> <span>NURSE</span></a>
     <ul class="side-menu">
         <li class="divider" data-text="main">Main</li>
         <li><a href="admin_dashboard.php" class="active"><i class='bx bxs-dashboard icon'></i>Dashboard</a></li>

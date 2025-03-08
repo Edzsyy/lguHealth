@@ -1,15 +1,19 @@
 <?php
 session_start();
 header('Content-Type: application/json');
-include('../../config/dbconn.php');
 
-// Get logged-in client_id from session
-$client_id = $_SESSION['client_id'];
+include('../config/dbconn.php');
+
+// Check if the user is logged in and is a nurse
+if (!isset($_SESSION['user_id'])) {
+    echo json_encode(['success' => false, 'message' => 'User not logged in or not authorized']);
+    exit;
+}
 
 // Start building the SQL query
-$where_clause = "appointments.client_id = ?"; // Filter by logged-in client
-$params = [$client_id];
-$types = 'i';
+$where_clause = "appointments.doctor_id = users.user_id";  // Join doctors to appointments
+$params = [];
+$types = ''; // Initialize empty string for parameter types
 
 // Filters (if provided)
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {

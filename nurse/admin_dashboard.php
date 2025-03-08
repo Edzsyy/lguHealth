@@ -1,5 +1,5 @@
 <?php
-include('../api/config/session_start.php');
+session_start();
 include('../api/config/dbconn.php');
 include('../nurse/assets/inc/header.php');
 include('../nurse/assets/inc/sidebar.php');
@@ -20,7 +20,7 @@ $total_appointments_row = mysqli_fetch_assoc($total_appointments_result);
 $total_appointments = $total_appointments_row['total'];
 
 // Pending appointments
-$pending_appointments_query = "SELECT COUNT(*) AS total FROM appointments WHERE status = 'pending'";
+$pending_appointments_query = "SELECT COUNT(*) AS total FROM appointments WHERE status = 'Scheduled'";
 $pending_appointments_result = mysqli_query($conn, $pending_appointments_query);
 $pending_appointments_row = mysqli_fetch_assoc($pending_appointments_result);
 $pending_appointments = $pending_appointments_row['total'];

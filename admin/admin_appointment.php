@@ -1,5 +1,5 @@
 <?php
-include('../api/config/session_start.php');
+session_start();
 include('../api/config/dbconn.php');
 include('../admin/assets/inc/header.php');
 include('../admin/assets/inc/sidebar.php');
@@ -278,48 +278,70 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Function to fetch and populate appointment data
     async function fetchAppointments(filters = {}) {
-        try {
-            let queryParams = new URLSearchParams(filters).toString();
-            let response = await fetch(`../api/appointment_management/list_appointments.php?${queryParams}`);
-            let data = await response.json();
+    try {
+        let queryParams = new URLSearchParams(filters).toString();
+        let response = await fetch(`../api/appointment_management/nurse_appointments.php?${queryParams}`);
+        let data = await response.json();
 
-            // Clear existing table rows
-            appointmentTableBody.innerHTML = "";
+        // Clear existing table rows
+        appointmentTableBody.innerHTML = "";
 
-            if (data.length === 0) {
-                appointmentTableBody.innerHTML = `<tr><td colspan="5" class="text-center">No appointments found</td></tr>`;
-                return;
+        if (data.length === 0) {
+            appointmentTableBody.innerHTML = `<tr><td colspan="7" class="text-center">No appointments found</td></tr>`;
+            return;
+        }
+
+        // Populate the table
+        data.forEach(appointment => {
+            let row = document.createElement('tr');
+
+            // Check if the status is 'completed' and modify the button
+            let rescheduleButtonHtml = ` 
+                <button class="btn btn-warning btn-sm reschedule-btn" 
+                        data-id="${appointment.appointment_id}" 
+                        data-patient="${appointment.patient_name}" 
+                        data-doctor="${appointment.doctor_id}" 
+                        data-date="${appointment.appointment_date}" 
+                        data-time="${appointment.appointment_time}" 
+                        data-notes="${appointment.notes}">
+                    Reschedule
+                </button>
+            `;
+
+            // If the status is 'completed', disable the button and modify its appearance
+            if (appointment.status === "Completed") {
+                rescheduleButtonHtml = `
+                    <button class="btn btn-secondary btn-sm reschedule-btn" 
+                            disabled 
+                            data-id="${appointment.appointment_id}" 
+                            data-patient="${appointment.patient_name}" 
+                            data-doctor="${appointment.doctor_id}" 
+                            data-date="${appointment.appointment_date}" 
+                            data-time="${appointment.appointment_time}" 
+                            data-notes="${appointment.notes}">
+                        Completed
+                    </button>
+                `;
             }
 
-            // Populate the table
-            data.forEach(appointment => {
-                let row = `
-                <tr>
-                    <td>${appointment.patient_name}</td>
-                    <td>${appointment.doctor_name}</td>
-                    <td>${appointment.appointment_date}</td>
-                    <td>${appointment.appointment_time || "N/A"}</td>
-        <td>${appointment.status}</td>
-        <td>${appointment.notes || "N/A"}</td>
-        <td>
-            <button class="btn btn-warning btn-sm reschedule-btn" 
-                data-id="${appointment.appointment_id}" 
-                data-patient="${appointment.patient_name}" 
-                data-doctor="${appointment.doctor_id}" 
-                data-date="${appointment.appointment_date}" 
-                data-time="${appointment.appointment_time}" 
-                data-notes="${appointment.notes}">
-                Reschedule
-            </button>
-        </td>
-                </tr>
-                `;
-                appointmentTableBody.innerHTML += row;
-            });
-        } catch (error) {
-            console.error("Error fetching appointments:", error);
-        }
+            row.innerHTML = `
+                <td>${appointment.patient_name}</td>
+                <td>${appointment.doctor_name}</td>
+                <td>${appointment.appointment_date}</td>
+                <td>${appointment.appointment_time || "N/A"}</td>
+                <td>${appointment.status}</td>
+                <td>${appointment.notes || "N/A"}</td>
+                <td>
+                    ${rescheduleButtonHtml}
+                </td>
+            `;
+
+            appointmentTableBody.appendChild(row);
+        });
+    } catch (error) {
+        console.error("Error fetching appointments:", error);
     }
+}
 
     // Fetch appointments initially (without filters)
     fetchAppointments();

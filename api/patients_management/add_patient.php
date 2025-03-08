@@ -1,5 +1,5 @@
 <?php
-include('../config/session_start.php');
+session_start();
 header('Content-Type: application/json');
 include('../config/dbconn.php');
 include('../log_functions.php');  // Include the log function file

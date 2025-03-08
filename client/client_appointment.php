@@ -1,5 +1,5 @@
 <?php
-include('../api/config/session_start.php');
+session_start();
 include('../api/config/dbconn.php');
 include('../client/assets/inc/header.php');
 include('../client/assets/inc/sidebar.php');
@@ -294,32 +294,80 @@ async function fetchAppointments(filters = {}) {
 
         // Populate the table
         data.forEach(appointment => {
-            let isCompleted = appointment.status === 'Completed';
-            let buttonClass = isCompleted ? 'btn-secondary' : 'btn-warning';  // Change to gray if completed
-            let buttonDisabled = isCompleted ? 'disabled' : '';  // Disable button if completed
+            let row = document.createElement('tr');
 
-            let row = `
-                <tr>
-                    <td>${appointment.patient_name}</td>
-                    <td>${appointment.doctor_name}</td>
-                    <td>${appointment.appointment_date}</td>
-                    <td>${appointment.appointment_time || "N/A"}</td>
-                    <td>${appointment.status}</td>
-                    <td>${appointment.notes || "N/A"}</td>
-                    <td>
-                        <button class="btn ${buttonClass} btn-sm reschedule-btn ${buttonDisabled}" 
-                            data-id="${appointment.appointment_id}" 
-                            data-patient="${appointment.patient_name}" 
-                            data-doctor="${appointment.doctor_id}" 
-                            data-date="${appointment.appointment_date}" 
-                            data-time="${appointment.appointment_time}" 
-                            data-notes="${appointment.notes}">
-                            Reschedule
-                        </button>
-                    </td>
-                </tr>
+            // Check if the status is 'completed' and modify the button
+            let completeButtonHtml = `
+            <button class="btn btn-warning btn-sm reschedule-btn" 
+                    data-id="${appointment.appointment_id}" 
+                    data-patient="${appointment.patient_name}" 
+                    data-doctor="${appointment.doctor_id}" 
+                    data-date="${appointment.appointment_date}" 
+                    data-time="${appointment.appointment_time}" 
+                    data-notes="${appointment.notes}">
+                Reschedule
+            </button>
             `;
-            appointmentTableBody.innerHTML += row;
+
+            // If the status is 'completed', modify the button appearance and disable it
+            if ((appointment.status === "Completed") || (appointment.status === "Cancelled")) {
+                completeButtonHtml = `
+                <button class="btn btn-secondary btn-sm complete-btn" 
+                        disabled 
+                        data-id="${appointment.appointment_id}" 
+                        data-patient="${appointment.patient_name}" 
+                        data-doctor="${appointment.doctor_id}" 
+                        data-date="${appointment.appointment_date}" 
+                        data-time="${appointment.appointment_time}" 
+                        data-notes="${appointment.notes}">
+                    Complete
+                </button>
+                `;
+            }
+
+            // Add the Cancel button (enabled only if the status is 'Scheduled')
+            let cancelButtonHtml = `
+            <button class="btn btn-danger btn-sm cancel-btn" 
+                    data-id="${appointment.appointment_id}" 
+                    data-patient="${appointment.patient_name}" 
+                    data-doctor="${appointment.doctor_id}" 
+                    data-date="${appointment.appointment_date}" 
+                    data-time="${appointment.appointment_time}" 
+                    data-notes="${appointment.notes}">
+                Cancel
+            </button>
+            `;
+            
+            // If the status is 'Completed' or 'Cancelled', disable the cancel button
+            if (appointment.status === "Completed" || appointment.status === "Cancelled") {
+                cancelButtonHtml = `
+                <button class="btn btn-secondary btn-sm cancel-btn" 
+                        disabled 
+                        data-id="${appointment.appointment_id}" 
+                        data-patient="${appointment.patient_name}" 
+                        data-doctor="${appointment.doctor_id}" 
+                        data-date="${appointment.appointment_date}" 
+                        data-time="${appointment.appointment_time}" 
+                        data-notes="${appointment.notes}">
+                    Cancel
+                </button>
+                `;
+            }
+
+            row.innerHTML = `
+            <td>${appointment.patient_name}</td>
+            <td>${appointment.doctor_name}</td>
+            <td>${appointment.appointment_date}</td>
+            <td>${appointment.appointment_time || "N/A"}</td>
+            <td>${appointment.status}</td>
+            <td>${appointment.notes || "N/A"}</td>
+            <td>
+                ${completeButtonHtml}
+                ${cancelButtonHtml}
+            </td>
+            `;
+
+            appointmentTableBody.appendChild(row);
         });
     } catch (error) {
         console.error("Error fetching appointments:", error);
@@ -329,6 +377,50 @@ async function fetchAppointments(filters = {}) {
 
         // Fetch appointments initially (without filters)
         fetchAppointments();
+// Handle 'Cancel' button click with confirmation
+document.addEventListener("click", function(event) {
+    if (event.target && event.target.classList.contains("cancel-btn")) {
+        const appointmentId = event.target.getAttribute("data-id");
+        const doctorId = event.target.getAttribute("data-doctor");
+        const patientName = event.target.getAttribute("data-patient");
+        const appointmentDate = event.target.getAttribute("data-date");
+        const appointmentTime = event.target.getAttribute("data-time");
+        const notes = event.target.getAttribute("data-notes");
+
+        // Show confirmation prompt
+        const confirmCancel = window.confirm("Are you sure you want to cancel this appointment?");
+
+        if (confirmCancel) {
+            const requestData = {
+                appointmentId: appointmentId,
+                doctorId: doctorId,
+                patientName: patientName,
+                appointmentDate: appointmentDate,
+                appointmentTime: appointmentTime,
+                notes: notes,
+                status: "Cancelled",  // Set the status to "Cancelled"
+            };
+
+            fetch("../api/client/appointment_management/cancel_appointment.php", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(requestData),
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        alert("Appointment cancelled successfully!");
+                        fetchAppointments(); // Reload appointments to reflect changes
+                    } else {
+                        alert("Error: " + result.message);
+                    }
+                })
+                .catch(error => console.error("Error cancelling appointment:", error));
+        }
+    }
+});
 
         // Handle filter submission
         filterForm.addEventListener("submit", function(event) {

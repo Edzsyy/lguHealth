@@ -21,6 +21,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->fetch();
 
             if (password_verify($password, $hashed_password)) {
+                // Regenerate session ID to prevent session fixation
+                session_regenerate_id(); // Regenerate session ID for users
                 $_SESSION['user_id'] = $user_id;
                 $_SESSION['role'] = ucfirst(strtolower($role));
 
@@ -44,8 +46,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->fetch();
 
             if (password_verify($password, $hashed_password)) {
-                $_SESSION['client_id'] = $client_id; // ✅ Now storing correct client ID
-                $_SESSION['role'] = 'Client';
+                // Regenerate session ID for clients
+                session_regenerate_id(); // Regenerate session ID for clients
+                $_SESSION['client_id'] = $client_id; // Store client ID
+                $_SESSION['role'] = 'Client'; // Set role to Client
 
                 echo json_encode([
                     'success' => true,
